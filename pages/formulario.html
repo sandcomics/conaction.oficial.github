@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora de Pantallas</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Verdana,Geneva,Tahoma,sans-serif;}
+        body{background:var(--color-background-tertiary);padding:20px;background:#e9ecef;}
+        .container{max-width:1100px;margin:auto;display:flex;border-radius:14px;overflow:hidden;border:0.5px solid var(--color-border-tertiary);}
+        .left{width:32%;background:#3e5239;color:#b0c7b8;padding:32px;display:flex;flex-direction:column;justify-content:center;gap:16px;}
+        .left h2{color:#d4e8d4;font-size:16px;font-weight:500;}
+        .left p{font-size:13px;line-height:1.6;}
+        .right{width:68%;background:var(--color-background-primary);background:#fff;padding:24px;}
+        .title{text-align:center;margin-bottom:20px;}
+        .title h1{color:#486345;font-size:18px;font-weight:500;margin-bottom:6px;}
+        .title span{background:#3e5239;color:white;padding:4px 16px;border-radius:20px;font-size:11px;}
+        .info{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+        .field{background:var(--color-background-secondary);background:#f8f9fa;padding:10px;border-radius:6px;border-left:4px solid #486345;}
+        .field label{font-size:11px;font-weight:500;color:#3e5239;display:block;margin-bottom:4px;}
+        .field input,.field select{width:100%;padding:6px;border-radius:4px;border:0.5px solid #ced4da;background:#fff;color:#212529;font-size:13px;}
+        .table-wrap{overflow:auto;border-radius:8px;border:1.5px solid #3e5239;}
+        table{width:100%;border-collapse:collapse;min-width:600px;}
+        th{background:#3e5239;color:white;padding:9px 7px;font-size:12px;font-weight:500;}
+        td{padding:5px;border-bottom:0.5px solid #7b8b6a;text-align:center;background:#fff;}
+        tbody tr:nth-child(even) td{background:#f8f9fa;}
+        .time{background:#486345 !important;color:white;font-weight:500;font-size:12px;white-space:nowrap;}
+        td input{width:100%;padding:4px 5px;border:0.5px solid #ced4da;border-radius:3px;background:#fff;color:#212529;font-size:12px;text-align:center;}
+        td input.auto{color:#486345;font-weight:500;}
+        .buttons{margin-top:16px;display:flex;justify-content:flex-end;gap:10px;}
+        .buttons button{padding:9px 20px;border:0.5px solid #ced4da;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;color:#212529;}
+        .buttons .save{background:#3e5239;color:white;border-color:#3e5239;}
+        .fila-seleccionada{background:#d4e8d4 !important;}
+        .fila-seleccionada td{background:#d4e8d4 !important;}
+        .hora-info{font-size:11px;color:#486345;margin-top:5px;text-align:right;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <h2>Bitácora de Pantallas</h2>
+        <p>Este registro permite llevar control del uso de pantallas, controles remotos y conexiones HDMI durante el horario escolar. Cada docente debe registrar la recepción y entrega del equipo.</p>
+        <p style="font-size:14px;font-weight:500;color:#d4e8d4;">Control de equipos</p>
+    </div>
+    <div class="right">
+        <div class="title">
+            <h1>BITÁCORA DE USO DE PANTALLAS</h1>
+            <span>Registro diario</span>
+        </div>
+        <div class="info">
+            <div class="field">
+                <label>🕒 SELECCIONAR HORA (fila a actualizar)</label>
+                <select id="horaSelector">
+                    <option value="0">7:00 - 8:00</option>
+                    <option value="1">8:00 - 9:00</option>
+                    <option value="2">9:00 - 10:00</option>
+                    <option value="3">10:00 - 11:00</option>
+                    <option value="4">11:00 - 12:00</option>
+                    <option value="5">12:00 - 13:00</option>
+                    <option value="6">13:00 - 14:00</option>
+                </select>
+            </div>
+            <div class="field"><label>Módulo</label><input type="text" id="modulo" placeholder="Ej. A-101"></div>
+            <div class="field"><label>Docente</label><input type="text" id="docente" placeholder="Nombre completo"></div>
+            <div class="field"><label>No. Control Remoto</label><input type="text" id="control" placeholder="Ej. CR-05"></div>
+            <div class="field"><label>Fecha</label><input type="date" id="fecha"></div>
+        </div>
+        <div class="table-wrap">
+            <table id="tabla">
+                <thead>
+                    <tr><th>Horario</th><th>Módulo</th><th>Docente</th><th>No. Control</th><th>Firma Recibe</th><th>Firma Entrega</th><th>HDMI</th></tr>
+                </thead>
+                <tbody id="cuerpo"></tbody>
+            </table>
+        </div>
+        <div class="buttons">
+            <button onclick="limpiar()">Limpiar</button>
+            <button onclick="descargarExcel()">Descargar Excel</button>
+            <button class="save" onclick="guardar()">Guardar Registro</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// 🔥 CONFIG FIREBASE (la tuya ya está bien)
+const firebaseConfig = {
+  apiKey: "AIzaSyDUlKmY-G-R8ZLweDCvHz_us_OYOjkHBes",
+  authDomain: "formulario-bebd3.firebaseapp.com",
+  projectId: "formulario-bebd3",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// =============================
+// TABLA
+// =============================
+const horarios = ["7:00 - 8:00","8:00 - 9:00","9:00 - 10:00","10:00 - 11:00","11:00 - 12:00","12:00 - 13:00","13:00 - 14:00"];
+let filaSeleccionadaIndex = 0;
+
+function crearTabla() {
+    const tbody = document.getElementById("cuerpo");
+    tbody.innerHTML = "";
+    horarios.forEach((h, i) => {
+        const tr = document.createElement("tr");
+        tr.setAttribute("data-fila-idx", i);
+        tr.innerHTML = `
+            <td class="time">${h}</td>
+            <td><input class="auto" data-campo="modulo" type="text"></td>
+            <td><input class="auto" data-campo="docente" type="text"></td>
+            <td><input class="auto" data-campo="control" type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        `;
+        tbody.appendChild(tr);
+    });
+    resaltarFilaSeleccionada();
+}
+
+function resaltarFilaSeleccionada() {
+    document.querySelectorAll("#cuerpo tr").forEach((row, idx) => {
+        row.classList.remove("fila-seleccionada");
+        if (idx === filaSeleccionadaIndex) {
+            row.classList.add("fila-seleccionada");
+        }
+    });
+}
+
+function actualizarFilaSeleccionada(campo) {
+    const valor = document.getElementById(campo).value;
+    const inputs = document.querySelectorAll(`#cuerpo tr[data-fila-idx="${filaSeleccionadaIndex}"] input[data-campo="${campo}"]`);
+    inputs.forEach(inp => {
+        inp.value = valor;
+    });
+}
+
+// =============================
+// EVENTOS
+// =============================
+document.getElementById("modulo").addEventListener("input", () => actualizarFilaSeleccionada("modulo"));
+document.getElementById("docente").addEventListener("input", () => actualizarFilaSeleccionada("docente"));
+document.getElementById("control").addEventListener("input", () => actualizarFilaSeleccionada("control"));
+
+document.getElementById("horaSelector").addEventListener("change", (e) => {
+    filaSeleccionadaIndex = parseInt(e.target.value);
+    resaltarFilaSeleccionada();
+});
+
+document.getElementById("fecha").valueAsDate = new Date();
+
+// =============================
+// LIMPIAR
+// =============================
+window.limpiar = function() {
+    document.getElementById("modulo").value = "";
+    document.getElementById("docente").value = "";
+    document.getElementById("control").value = "";
+    document.getElementById("fecha").valueAsDate = new Date();
+
+    document.querySelectorAll("#cuerpo input").forEach(inp => inp.value = "");
+};
+
+// =============================
+// GUARDAR EN FIREBASE 🔥
+// =============================
+window.guardar = async function() {
+    const datos = {
+        modulo: document.getElementById("modulo").value,
+        docente: document.getElementById("docente").value,
+        control: document.getElementById("control").value,
+        fecha: document.getElementById("fecha").value,
+        tabla: []
+    };
+
+    document.querySelectorAll("#cuerpo tr").forEach(tr => {
+        const fila = [];
+        tr.querySelectorAll("input").forEach(inp => fila.push(inp.value));
+        datos.tabla.push(fila);
+    });
+
+    try {
+        await addDoc(collection(db, "registros"), datos);
+        alert("Guardado correctamente 🔥");
+    } catch (e) {
+        console.error(e);
+        alert("Error al guardar");
+    }
+};
+
+// =============================
+// DESCARGAR EXCEL 🔥
+// =============================
+window.descargarExcel = async function() {
+    const querySnapshot = await getDocs(collection(db, "registros"));
+
+    const datos = [
+        ["Módulo", "Docente", "Control", "Fecha"]
+    ];
+
+    querySnapshot.forEach(doc => {
+        const d = doc.data();
+        datos.push([d.modulo, d.docente, d.control, d.fecha]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(datos);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Registros");
+
+    XLSX.writeFile(wb, "registros_completos.xlsx");
+};
+
+// =============================
+crearTabla();
+</script>
+</body>
+</html>

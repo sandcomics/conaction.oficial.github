@@ -1,0 +1,3 @@
+modificar bloqueador se puede saltar algunas palabras ejemplo mierda no lo hacepta pero si mierdA osea si cambias una mayuscula o minuscula igual sigue igual checar si es si solo lo admine en minusculas y mayusculas y le faltan palabras como puta o puto marica 
+
+crear un publicar para principal.html pero que pueda publicar pero no tenga la opcion de dirrecion ni promocion

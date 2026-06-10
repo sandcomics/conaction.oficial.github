@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONAVERSE - CONALEP 165 Tuxpan</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+
+
+
+
+
+
+
+#intro-screen {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease;
+}
+#intro-screen.ocultar {
+  opacity: 0;
+  pointer-events: none;
+}
+.intro-logo {
+  width: 90vw;
+  max-width: 700px;
+}
+.intro-logo svg {
+  width: 100%;
+  height: auto;
+}
+.linea-sombra {
+  fill: none;
+  stroke: rgba(0,140,80,0.12);
+  stroke-width: 38;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1300;
+  stroke-dashoffset: 1300;
+  animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+}
+.linea-principal {
+  fill: none;
+  stroke: url(#grad-conalep);
+  stroke-width: 26;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1300;
+  stroke-dashoffset: 1300;
+  animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+}
+.linea-top    { animation-delay: 0.1s; }
+.linea-bottom { animation-delay: 0.45s; }
+.intro-titulo {
+  font-family: 'Segoe UI', 'Arial Black', sans-serif;
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: #006f47;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(22px);
+  animation: aparecer 0.9s ease forwards 2.3s;
+}
+.intro-subtitulo {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(11px, 2vw, 17px);
+  font-weight: 600;
+  letter-spacing: 6px;
+  color: #009960;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: aparecer 0.9s ease forwards 2.6s;
+}
+.intro-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+@keyframes aparecer { to { opacity: 1; transform: translateY(0); } }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:'Roboto',sans-serif;
+background:#f0f2f5;
+color:#222;
+overflow-x:hidden;
+}
+
+.topbar{
+background:#ffffff;
+border-bottom:1px solid #e6e6e6;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:8px 18px;
+position:sticky;
+top:0;
+z-index:60;
+box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.brand img{
+height:48px;
+border-radius:6px;
+}
+
+.tabs{
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.tab{
+padding:10px 14px;
+border-radius:8px;
+background:transparent;
+border:none;
+cursor:pointer;
+font-weight:600;
+color:#333;
+}
+
+.tab.active{
+background:#006341;
+color:white;
+}
+
+.container{
+max-width:1200px;
+margin:20px auto;
+display:grid;
+grid-template-columns:320px 1fr 320px;
+gap:20px;
+padding:0 12px;
+}
+
+.card{
+background:white;
+border-radius:12px;
+padding:16px;
+box-shadow:0 6px 18px rgba(0,0,0,0.06)
+}
+
+.left-column .card img{
+max-width:100%;
+border-radius:8px
+}
+
+.post{
+background:white;
+border-radius:12px;
+padding:14px;
+margin-bottom:12px;
+box-shadow:0 6px 18px rgba(0,0,0,0.05)
+}
+
+.post .meta{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:8px
+}
+
+.post .meta .left{
+display:flex;
+gap:10px;
+align-items:center
+}
+
+.avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+background:#ddd
+}
+
+.post .body{
+font-size:15px;
+margin-bottom:10px;
+white-space:pre-wrap
+}
+
+.post .actions{
+display:flex;
+gap:12px;
+margin-top:10px;
+color:#555;
+font-weight:600
+}
+
+.post-action{
+display:flex;
+align-items:center;
+gap:4px;
+cursor:pointer
+}
+
+h1.page-title{
+text-align:center;
+color:#006341;
+font-family:'Poppins',sans-serif
+}
+
+.empty-message{
+text-align:center;
+padding:18px;
+color:#666
+}
+
+</style>
+</head>
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="intro-screen">
+  <div class="intro-contenido">
+    <div class="intro-logo">
+      <svg viewBox="-110 -90 540 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad-conalep" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#00c87a"/>
+            <stop offset="50%"  stop-color="#009955"/>
+            <stop offset="100%" stop-color="#006633"/>
+          </linearGradient>
+        </defs>
+        <path class="linea-sombra linea-top"       d="M-110 55  Q160 -130 430 75"/>
+        <path class="linea-sombra linea-bottom"    d="M-110 185 Q165  330 430 165"/>
+        <path class="linea-principal linea-top"    d="M-110 55  Q160 -130 430 75"/>
+        <path class="linea-principal linea-bottom" d="M-110 185 Q165  330 430 165"/>
+      </svg>
+    </div>
+    <div class="intro-titulo">CONALEP</div>
+    <div class="intro-subtitulo">Veracruz</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="topbar">
+
+<div class="brand">
+<img src="../assets/images/logoq.jpeg">
+<div>
+<div style="font-weight:700">CONALEP 165 Tuxpan</div>
+<div style="font-size:12px;color:#666">Red interna de la comunidad</div>
+</div>
+</div>
+
+<div class="tabs">
+
+<button class="tab active" data-tab="inicio" onclick="switchTab('inicio')">Inicio</button>
+
+<button class="tab" data-tab="direccion" onclick="switchTab('direccion')">Dirección</button>
+
+<button class="tab" onclick="window.location.href='archivos.html'">Archivos</button>
+
+<button class="tab" onclick="window.location.href='publicar.html'">Publicar</button>
+
+<button class="tab" onclick="window.location.href='formulario.html'">Televisiones</button>
+
+<button class="tab" onclick="window.location.href='LABORATORIOOOO.html'">Laboratorio</button>
+
+<button class="tab" onclick="window.location.href='bot1.html'">Bot</button>
+
+<button class="tab" data-tab="promocion" onclick="switchTab('promocion')">Promoción</button>
+
+</div>
+</div>
+
+
+<div class="container">
+
+
+<div class="left-column">
+
+<div class="card">
+
+<h3>Ubicación</h3>
+
+<p>Calle 2da general silva, Tuxpan, Veracruz</p>
+
+<img src="../assets/images/ubi.png">
+
+</div>
+
+
+<div class="card" style="margin-top:14px">
+
+<h3>Galería rápida</h3>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+
+<img src="../assets/images/CAR.jpeg" style="width:92px;height:72px;object-fit:cover;border-radius:6px">
+
+<img src="../assets/images/F1.png" style="width:92px;height:72px;object-fit:cover;border-radius:6px">
+
+<img src="../assets/images/m1.jpeg" style="width:92px;height:72px;object-fit:cover;border-radius:6px">
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<main class="center-column">
+
+<h1 class="page-title">PRINCIPAL</h1>
+
+<section id="feed" class="card">
+
+<div id="posts-list">
+
+<div class="empty-message">Cargando publicaciones...</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+
+<aside class="right-column">
+
+<div class="card">
+
+<h3>Contacto</h3>
+
+<p>Email: conalep165@conalep.edu.mx</p>
+
+<p>Teléfono: 783 128 1051</p>
+
+</div>
+
+
+<div class="card" style="margin-top:12px">
+
+<h3>Preguntas frecuentes</h3>
+
+<ul>
+
+<li>¿Qué carreras ofrecen?</li>
+
+<li>¿Horario de atención?</li>
+
+</ul>
+
+</div>
+
+</aside>
+
+</div>
+
+
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSyCt7bQO-WAKxxtGRMrRRQ-JEgB9XQARTSU",
+authDomain:"undertale-web.firebaseapp.com",
+projectId:"undertale-web",
+storageBucket:"undertale-web.firebasestorage.app"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db=firebase.firestore();
+
+const postsList=document.getElementById("posts-list");
+
+let postsCache=[];
+let currentTab="inicio";
+
+
+function switchTab(tab){
+
+currentTab=tab;
+
+document.querySelectorAll(".tab").forEach(t=>{
+
+t.classList.toggle("active",t.dataset.tab===tab)
+
+});
+
+renderPosts()
+
+}
+
+
+db.collection("posts").orderBy("createdAt","desc").onSnapshot(snapshot=>{
+
+postsCache=[]
+
+snapshot.forEach(doc=>{
+
+postsCache.push({...doc.data(),id:doc.id})
+
+})
+
+renderPosts()
+
+})
+
+
+function renderPosts(){
+
+let filtered=[...postsCache]
+
+if(currentTab==="archivos"){
+
+filtered=filtered.filter(p=>p.fileUrl)
+
+}
+
+if(currentTab==="promocion"){
+
+filtered=filtered.filter(p=>p.isPromotion)
+
+}
+
+if(currentTab==="direccion"){
+
+filtered=filtered.filter(p=>p.location)
+
+}
+
+postsList.innerHTML=""
+
+if(!filtered.length){
+
+postsList.innerHTML='<div class="empty-message">No hay publicaciones.</div>'
+
+return
+
+}
+
+
+filtered.forEach(p=>{
+
+const post=document.createElement("article")
+
+post.className="post"
+
+post.innerHTML=`
+
+<div class="meta">
+
+<div class="left">
+
+<div class="avatar"></div>
+
+<div>
+
+<div><strong>Usuario CONALEP</strong></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="body">${p.texto||""}</div>
+
+`
+
+if(p.fileUrl){
+
+const media=document.createElement("div")
+
+if(p.fileMeta && p.fileMeta.type.startsWith("image")){
+
+media.innerHTML=`<img src="${p.fileUrl}" style="width:100%;border-radius:8px">`
+
+}else if(p.fileMeta && p.fileMeta.type.startsWith("video")){
+
+media.innerHTML=`<video src="${p.fileUrl}" controls style="width:100%"></video>`
+
+}else{
+
+media.innerHTML=`<a href="${p.fileUrl}" target="_blank">Abrir archivo</a>`
+
+}
+
+post.appendChild(media)
+
+}
+
+postsList.appendChild(post)
+
+})
+
+}
+
+</script>
+
+
+
+
+
+
+
+
+<script>
+  // La animación termina a los ~3.5s, luego fade out de 0.8s
+  setTimeout(function () {
+    var intro = document.getElementById('intro-screen');
+    intro.classList.add('ocultar');
+    setTimeout(function () { intro.remove(); }, 800);
+  }, 3500);
+</script>
+
+  <script src="../assets/js/script.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONALEP Veracruz — Acceso</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: #0d3d28;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  overflow: hidden;
+}
+
+.wrap {
+  min-height: 100vh; width: 100%;
+  background: #0d3d28;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+.deco-circle {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+}
+
+.intro {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  transition: opacity 0.9s ease;
+  z-index: 2;
+}
+.intro.out { opacity: 0; pointer-events: none; }
+
+.card {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  z-index: 2;
+  background: rgba(255,255,255,0.06);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 44px 48px;
+  text-align: center;
+  min-width: 320px;
+}
+.card.in { opacity: 1; transform: translateY(0); }
+
+.card-eyebrow {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #5dcaa5;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: #f0fdf7;
+  margin-bottom: 32px;
+  line-height: 1.4;
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-rol {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px;
+  padding: 22px 20px;
+  border-radius: 14px;
+  border: 0.5px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  color: #e8f8f2;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  text-decoration: none;
+}
+.btn-rol:hover {
+  background: rgba(93,202,165,0.18);
+  border-color: rgba(93,202,165,0.5);
+  transform: translateY(-2px);
+}
+.btn-rol:active { transform: scale(0.97); }
+
+.btn-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-icon svg { width: 20px; height: 20px; }
+.btn-label { font-size: 15px; font-weight: 500; }
+.btn-sub { font-size: 11px; color: rgba(232,248,242,0.55); letter-spacing: 1px; text-transform: uppercase; }
+
+.icon-alumno { background: rgba(93,202,165,0.2); }
+.icon-docente { background: rgba(239,159,39,0.2); }
+
+.linea-sombra {
+  fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 36;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1300; stroke-dashoffset: 1300;
+  animation: draw 2.2s cubic-bezier(0.77,0,0.18,1) forwards;
+}
+.linea-main {
+  fill: none; stroke: url(#g1); stroke-width: 22;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1300; stroke-dashoffset: 1300;
+  animation: draw 2.2s cubic-bezier(0.77,0,0.18,1) forwards;
+}
+.t { animation-delay: 0.05s; }
+.b { animation-delay: 0.5s; }
+
+.wordmark {
+  font-family: 'Segoe UI', 'Arial Black', sans-serif;
+  font-size: 42px; font-weight: 900; letter-spacing: 12px;
+  color: #fff; text-transform: uppercase;
+  opacity: 0; transform: translateY(18px);
+  animation: rise 0.8s ease forwards 2.4s;
+}
+.submark {
+  font-size: 13px; font-weight: 500; letter-spacing: 7px;
+  color: #5dcaa5; text-transform: uppercase;
+  opacity: 0; transform: translateY(10px);
+  animation: rise 0.8s ease forwards 2.7s;
+}
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="deco-circle" style="width:500px;height:500px;top:-200px;right:-150px;"></div>
+  <div class="deco-circle" style="width:300px;height:300px;bottom:-120px;left:-80px;"></div>
+
+  <div class="intro" id="intro">
+    <svg viewBox="-110 -90 540 370" style="width:280px;height:auto;">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#5dcaa5"/>
+          <stop offset="50%" stop-color="#1d9e75"/>
+          <stop offset="100%" stop-color="#0f6e56"/>
+        </linearGradient>
+      </defs>
+      <path class="linea-sombra t" d="M-110 55  Q160 -130 430 75"/>
+      <path class="linea-sombra b" d="M-110 185 Q165  330 430 165"/>
+      <path class="linea-main t"   d="M-110 55  Q160 -130 430 75"/>
+      <path class="linea-main b"   d="M-110 185 Q165  330 430 165"/>
+    </svg>
+    <div class="wordmark">CONALEP</div>
+    <div class="submark">Veracruz</div>
+  </div>
+
+  <div class="card" id="card">
+    <div class="card-eyebrow">Portal de acceso</div>
+    <div class="card-title">¿Cómo deseas ingresar?</div>
+    <div class="btn-grid">
+      <a class="btn-rol" href="pages/two.html">
+        <div class="btn-icon icon-alumno">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5dcaa5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 14c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4z"/>
+            <circle cx="12" cy="8" r="4"/>
+          </svg>
+        </div>
+        <span class="btn-label">Alumno</span>
+        <span class="btn-sub">Estudiante</span>
+      </a>
+      <a class="btn-rol" href="pages/one.html">
+        <div class="btn-icon icon-docente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef9f27" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="13" rx="2"/>
+            <path d="M8 21h8M12 16v5"/>
+            <path d="M7 8h10M7 11h6"/>
+          </svg>
+        </div>
+        <span class="btn-label">Docente</span>
+        <span class="btn-sub">Personal</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  setTimeout(function() {
+    var intro = document.getElementById('intro');
+    var card  = document.getElementById('card');
+    intro.classList.add('out');
+    setTimeout(function() {
+      intro.style.display = 'none';
+      card.classList.add('in');
+    }, 900);
+  }, 3600);
+  
+</script>
+
+</body>
+</html>

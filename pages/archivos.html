@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentos Institucionales</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* --- PANTALLA DE INTRODUCCIÓN --- */
+    #intro-screen {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease;
+    }
+    #intro-screen.ocultar {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .intro-logo {
+      width: 90vw;
+      max-width: 700px;
+    }
+    .intro-logo svg {
+      width: 100%;
+      height: auto;
+    }
+    .linea-sombra {
+      fill: none;
+      stroke: rgba(0,140,80,0.12);
+      stroke-width: 38;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1300;
+      stroke-dashoffset: 1300;
+      animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+    }
+    .linea-principal {
+      fill: none;
+      stroke: url(#grad-conalep);
+      stroke-width: 26;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1300;
+      stroke-dashoffset: 1300;
+      animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+    }
+    .linea-top    { animation-delay: 0.1s; }
+    .linea-bottom { animation-delay: 0.45s; }
+    
+    .intro-titulo {
+      font-family: 'Segoe UI', 'Arial Black', sans-serif;
+      font-size: clamp(28px, 6vw, 56px);
+      font-weight: 900;
+      letter-spacing: 10px;
+      color: #006f47;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: aparecer 0.9s ease forwards 2.3s;
+    }
+    .intro-subtitulo {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: clamp(11px, 2vw, 17px);
+      font-weight: 600;
+      letter-spacing: 6px;
+      color: #009960;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: aparecer 0.9s ease forwards 2.6s;
+    }
+    .intro-contenido {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    @keyframes dibujar { to { stroke-dashoffset: 0; } }
+    @keyframes aparecer { to { opacity: 1; transform: translateY(0); } }
+
+    /* --- ESTILOS GENERALES --- */
+    :root {
+      --verde-principal: #2E7D32;
+      --verde-claro: #4CAF50;
+      --verde-suave: #E8F5E9;
+      --gris-oscuro: #37474F;
+      --gris-medio: #546E7A;
+      --gris-claro: #ECEFF1;
+      --blanco: #FFFFFF;
+      --sombra: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--gris-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      
+      /* RUTA CORREGIDA: Agregado '../' para salir de la carpeta pages/ */
+      background: url('../assets/images/conection.jpg') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(236, 239, 241, 0.25);
+      z-index: -1;
+    }
+
+    /* --- CONTENEDOR PRINCIPAL --- */
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--sombra);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      opacity: 0; 
+      transform: translateY(20px);
+    }
+
+    .header {
+      padding: 48px 48px 32px;
+      border-bottom: 1px solid var(--gris-claro);
+      text-align: center;
+      background: linear-gradient(135deg, rgba(232, 245, 233, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%);
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--verde-principal) 0%, var(--verde-claro) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+    }
+
+    .logo i {
+      color: var(--blanco);
+      font-size: 1.6rem;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gris-oscuro);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .header p {
+      color: var(--gris-medio);
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .document-list {
+      padding: 0 40px 40px;
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+
+    #pdf-list {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    /* --- ELEMENTOS DE LA LISTA --- */
+    .pdf-item {
+      display: flex;
+      align-items: center;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      border: 1px solid var(--gris-claro);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .pdf-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.15);
+      border-color: var(--verde-claro);
+    }
+
+    .pdf-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background-color: var(--verde-principal);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .pdf-item:hover::before {
+      opacity: 1;
+    }
+
+    .pdf-icon {
+      width: 44px;
+      height: 44px;
+      background-color: var(--verde-suave);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      flex-shrink: 0;
+      color: var(--verde-principal);
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .pdf-item:hover .pdf-icon {
+      background-color: var(--verde-principal);
+      color: var(--blanco);
+    }
+
+    .pdf-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pdf-link {
+      text-decoration: none;
+      color: var(--gris-oscuro);
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 6px;
+      transition: color 0.3s ease;
+    }
+
+    .pdf-link:hover {
+      color: var(--verde-principal);
+    }
+
+    .pdf-filename {
+      color: var(--gris-medio);
+      font-size: 0.85rem;
+      font-family: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+      opacity: 0.8;
+    }
+
+    .pdf-arrow {
+      color: var(--verde-principal);
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .pdf-item:hover .pdf-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* --- MENSAJE INFORMATIVO --- */
+    .future-message {
+      background-color: rgba(232, 245, 233, 0.9);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed var(--verde-claro);
+      margin-top: 24px;
+    }
+
+    .future-message i {
+      color: var(--verde-principal);
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .future-message h3 {
+      color: var(--gris-oscuro);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .future-message p {
+      color: var(--gris-medio);
+      font-size: 0.95rem;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    .count-badge {
+      display: inline-block;
+      background-color: var(--verde-principal);
+      color: var(--blanco);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    /* --- RESPONSIVE DESIGNS --- */
+    @media (max-width: 768px) {
+      .container {
+        max-width: 100%;
+        margin: 20px;
+      }
+      .header, .document-list {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+      .header {
+        padding-top: 40px;
+        padding-bottom: 28px;
+      }
+      .header h1 {
+        font-size: 1.7rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      .pdf-item {
+        padding: 16px 20px;
+      }
+      .pdf-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 16px;
+      }
+    }
+
+    /* --- ANIMACIONES --- */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .pdf-item:nth-child(1) { animation-delay: 0.1s; }
+    .pdf-item:nth-child(2) { animation-delay: 0.2s; }
+    .pdf-item:nth-child(3) { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <div id="intro-screen">
+    <div class="intro-contenido">
+      <div class="intro-logo">
+        <svg viewBox="-110 -90 540 380" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad-conalep" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#00c87a"/>
+              <stop offset="50%"  stop-color="#009955"/>
+              <stop offset="100%" stop-color="#006633"/>
+            </linearGradient>
+          </defs>
+          <path class="linea-sombra linea-top"       d="M-110 55  Q160 -130 430 75"/>
+          <path class="linea-sombra linea-bottom"    d="M-110 185 Q165  330 430 165"/>
+          <path class="linea-principal linea-top"    d="M-110 55  Q160 -130 430 75"/>
+          <path class="linea-principal linea-bottom" d="M-110 185 Q165  330 430 165"/>
+        </svg>
+      </div>
+      <div class="intro-titulo">CONALEP</div>
+      <div class="intro-subtitulo">Veracruz</div>
+    </div>
+  </div>
+  
+  <div class="container" id="main-container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <h1>Documentos Institucionales<span class="count-badge" id="file-count">0</span></h1>
+      <p>Documentos fundamentales para la organización y gestión</p>
+    </div>
+    
+    <div class="document-list">
+      <ul id="pdf-list">
+        </ul>
+      
+      <div class="future-message">
+        <i class="fas fa-clock"></i>
+        <h3>Más documentos próximamente</h3>
+        <p>Este es un ejemplo demostrativo. En una implementación real, se agregarían más documentos institucionales según sea necesario.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. Gestión de la Pantalla de Introducción (Intro Screen)
+    setTimeout(function () {
+      const intro = document.getElementById('intro-screen');
+      if (intro) {
+        intro.classList.add('ocultar');
+        setTimeout(function () { 
+          intro.remove(); 
+          // Revelar suavemente el contenedor principal
+          const container = document.getElementById('main-container');
+          container.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          container.style.opacity = '1';
+          container.style.transform = 'translateY(0)';
+        }, 800);
+      }
+    }, 3500);
+
+    // 2. Lista de archivos PDF (Data)
+    // RUTAS CORREGIDAS: Se añade '../' al inicio de cada filename para salir de la carpeta pages/
+    const pdfFiles = [
+      {
+        display: "MISIÓN",
+        filename: "../assets/pdfs/mision.pdf",
+        icon: "fas fa-bullseye"
+      },
+      {
+        display: "VISIÓN", 
+        filename: "../assets/pdfs/vision.pdf",
+        icon: "fas fa-eye"
+      },
+      {
+        display: "POLÍTICA DE CALIDAD",
+        filename: "../assets/pdfs/politicadecalidad.pdf",
+        icon: "fas fa-award"
+      }
+    ];
+
+    const list = document.getElementById("pdf-list");
+    const fileCount = document.getElementById("file-count");
+
+    // Actualizar contador global
+    fileCount.textContent = pdfFiles.length;
+
+    // 3. Renderizado Dinámico de Documentos
+    pdfFiles.forEach((file) => {
+      const li = document.createElement("li");
+      li.className = "pdf-item";
+      
+      // Limpiar visualmente el subtítulo mostrando solo el nombre del archivo
+      const cleanName = file.filename.split('/').pop();
+      
+      li.innerHTML = `
+        <div class="pdf-icon">
+          <i class="${file.icon}"></i>
+        </div>
+        <div class="pdf-details">
+          <a class="pdf-link" href="${file.filename}" target="_blank">${file.display}</a>
+          <div class="pdf-filename">${cleanName}</div>
+        </div>
+        <div class="pdf-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      `;
+      
+      // Permitir que toda la fila reaccione al clic
+      li.addEventListener('click', function(e) {
+        if (e.target.tagName !== 'A') {
+          window.open(file.filename, '_blank');
+        }
+      });
+      
+      list.appendChild(li);
+    });
+  </script>
+</body>
+</html>

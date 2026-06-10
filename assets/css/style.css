@@ -1,0 +1,161 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    background-color: rgb(24, 80, 42);
+    color: rgb(255, 251, 251);
+    text-align: center;
+    padding: 10px;
+}
+
+#titulo {
+    color: rgb(0, 0, 0);
+    text-align: center;
+    font-size: 28px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.text1,
+.text2 {
+    width: 600px;
+    box-sizing: border-box;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 15px;
+    box-shadow: 5px 5px 10px gray;
+    border-radius: 15px;
+    margin: 20px auto;
+    text-align: justify;
+    background-color: #fff;
+}
+
+#coemtarios {
+    background: lightgray;
+    width: 630px;
+    height: 500px;
+    box-sizing: border-box;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid black;
+    line-height: 2;
+    overflow: auto;
+    font-family: sans-serif;
+    border-radius: 10px;
+}
+
+.comment {
+    font-size: 15px;
+    text-shadow: 0 0 4px rgb(83, 70, 70);
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 15px auto;
+    background: rgba(255, 255, 255, 0.9);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    color: black;
+}
+
+/* Sección de sugerencias completa */
+.seccion-comentarios {
+    background-color: #2e7d32;
+    padding: 40px 20px;
+    border-radius: 20px;
+    max-width: 800px;
+    margin: 30px auto;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Caja para escribir comentario */
+.comment-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* Textarea centrado */
+.comment-box textarea {
+    width: 90%;
+    max-width: 600px;
+    height: 120px;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    resize: none;
+    font-family: inherit;
+    text-align: center;
+    background-color: white;
+    color: black;
+}
+
+/* Botón centrado */
+.comment-box button {
+    background-color: #1b5e20;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comment-box button:hover {
+    background-color: #388e3c;
+}
+
+/* Mensaje de error */
+#error-message {
+    color: #ffcccb;
+    font-weight: bold;
+}
+
+/* Lista de comentarios centrada */
+#comentarios-lista {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Comentario vacío */
+.empty-message {
+    color: #ccc;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Fondo contenedor viejo (opcional si aún se usa) */
+#fondc {
+    background: rgb(42, 40, 26);
+    width: 680px;
+    height: 670px;
+    margin: 0 auto 30px auto;
+    border-radius: 10px;
+    padding-bottom: 20px;
+}
+
+/* Título centrado del área de comentarios */
+#com {
+    color: white;
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 15px;
+    padding-top: 20px;
+    font-family: monospace;
+}

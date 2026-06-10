@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONAVERSE Bot - CONALEP 165</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+
+
+
+
+#intro-screen {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease;
+}
+#intro-screen.ocultar {
+  opacity: 0;
+  pointer-events: none;
+}
+.intro-logo {
+  width: 90vw;
+  max-width: 700px;
+}
+.intro-logo svg {
+  width: 100%;
+  height: auto;
+}
+.linea-sombra {
+  fill: none;
+  stroke: rgba(0,140,80,0.12);
+  stroke-width: 38;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1300;
+  stroke-dashoffset: 1300;
+  animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+}
+.linea-principal {
+  fill: none;
+  stroke: url(#grad-conalep);
+  stroke-width: 26;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1300;
+  stroke-dashoffset: 1300;
+  animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+}
+.linea-top    { animation-delay: 0.1s; }
+.linea-bottom { animation-delay: 0.45s; }
+.intro-titulo {
+  font-family: 'Segoe UI', 'Arial Black', sans-serif;
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: #006f47;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(22px);
+  animation: aparecer 0.9s ease forwards 2.3s;
+}
+.intro-subtitulo {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(11px, 2vw, 17px);
+  font-weight: 600;
+  letter-spacing: 6px;
+  color: #009960;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: aparecer 0.9s ease forwards 2.6s;
+}
+.intro-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+@keyframes aparecer { to { opacity: 1; transform: translateY(0); } }
+
+
+
+
+
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            color: #333;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .chatbot-container {
+            width: 100%;
+            max-width: 1300px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0, 99, 65, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            height: 90vh;
+            max-height: 900px;
+            position: relative;
+        }
+
+        /* Panel izquierdo - Chat */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            position: relative;
+        }
+
+        /* Header */
+        .chat-header {
+            background: linear-gradient(135deg, #006341 0%, #004d33 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .bot-avatar {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #006341;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .header-info h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-info .subtitle {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-info .tagline {
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Chat Body */
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        /* Indicador de scroll */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #006341 0%, #00995e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 99, 65, 0.3);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(10px);
+        }
+
+        .scroll-indicator.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-indicator:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 99, 65, 0.4);
+        }
+
+        .scroll-indicator.scrolling {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Barra de progreso */
+        .scroll-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            z-index: 20;
+        }
+
+        .scroll-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #006341 0%, #00995e 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* Botón flotante para scroll rápido */
+        .quick-scroll-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 70px;
+            background: white;
+            border: 2px solid #006341;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            z-index: 90;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .quick-scroll-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .quick-scroll-btn:hover {
+            background: #006341;
+            color: white;
+        }
+
+        /* Messages */
+        .message {
+            max-width: 85%;
+            padding: 16px 20px;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            border-left: 4px solid #006341;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #006341 0%, #00995e 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .bot-icon {
+            color: #006341;
+        }
+
+        .user-icon {
+            color: white;
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+            border: 2px dashed #006341;
+            margin-bottom: 10px;
+        }
+
+        .welcome-icon {
+            font-size: 40px;
+            color: #006341;
+            margin-bottom: 15px;
+        }
+
+        .welcome-title {
+            color: #006341;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text {
+            color: #444;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            border-left: 5px solid #006341;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .card-title {
+            color: #006341;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-content {
+            color: #444;
+            font-size: 15px;
+            line-height: 1.6;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-content > * {
+            max-width: 100%;
+        }
+
+        .requirement-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .requirement-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .requirement-list li:last-child {
+            border-bottom: none;
+        }
+
+        .requirement-icon {
+            color: #006341;
+            font-size: 16px;
+            min-width: 20px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .requirement-text {
+            flex: 1;
+        }
+
+        .highlight-box {
+            background: #f0f9f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #006341;
+            width: 100%;
+        }
+
+        /* Panel derecho - Botones */
+        .buttons-panel {
+            width: 400px;
+            background: white;
+            border-left: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+
+        /* Indicador de scroll en panel derecho */
+        .panel-scroll-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 99, 65, 0.1);
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 11px;
+            color: #006341;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .panel-scroll-indicator.visible {
+            opacity: 1;
+        }
+
+        .section-title {
+            color: #006341;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .topic-button {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 90px;
+            gap: 8px;
+            touch-action: manipulation;
+        }
+
+        .topic-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 99, 65, 0.15);
+            border-color: #006341;
+            background: #f9fffc;
+        }
+
+        .topic-button:active {
+            transform: translateY(-1px);
+        }
+
+        .button-icon {
+            font-size: 24px;
+            color: #006341;
+            margin-bottom: 5px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #006341 0%, #00995e 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            touch-action: manipulation;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 99, 65, 0.25);
+        }
+
+        /* Info adicional */
+        .panel-info {
+            margin-top: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #006341;
+        }
+
+        .info-title {
+            color: #006341;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-content {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            background: #006341;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .info-icon {
+            color: #006341;
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            padding-top: 5px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .message-content strong {
+            color: #006341;
+            font-weight: 700;
+        }
+
+        /* Botón para móvil - Menú lateral */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #006341 0%, #00995e 100%);
+            border-radius: 50%;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 99, 65, 0.3);
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .mobile-menu-toggle.active {
+            transform: rotate(90deg);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 900;
+            backdrop-filter: blur(3px);
+        }
+
+        /* Mensaje de instrucción */
+        .instruction-message {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 10px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instruction-icon {
+            font-size: 32px;
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .instruction-text {
+            color: #856404;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Scroll personalizado */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #006341 #f1f1f1;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #006341;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #004d33;
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+        
+        /* Tablet grande (1200px y menos) */
+        @media (max-width: 1200px) {
+            .chatbot-container {
+                max-width: 95%;
+                height: 85vh;
+            }
+            
+            .buttons-panel {
+                width: 350px;
+            }
+        }
+
+        /* Tablet (1024px y menos) */
+        @media (max-width: 1024px) {
+            .chatbot-container {
+                flex-direction: column;
+                max-width: 95%;
+                height: 90vh;
+                margin: 10px auto;
+            }
+            
+            .buttons-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #eee;
+                max-height: 350px;
+                padding: 20px;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+            
+            .topic-button {
+                min-height: 80px;
+                padding: 15px 10px;
+                font-size: 13px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+            
+            .chat-body {
+                padding: 20px;
+            }
+            
+            .scroll-indicator {
+                bottom: 15px;
+                right: 15px;
+                width: 35px;
+                height: 35px;
+            }
+            
+            .quick-scroll-btn {
+                bottom: 15px;
+                right: 60px;
+            }
+        }
+
+        /* Tablet pequeña (768px y menos) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                background: linear-gradient(135deg, #e0e7ff 0%, #d1d8f0 100%);
+            }
+            
+            .chatbot-container {
+                height: 95vh;
+                max-height: none;
+                border-radius: 15px;
+                width: 100%;
+                margin: 0;
+            }
+            
+            .chat-header {
+                padding: 15px 20px;
+            }
+            
+            .bot-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            
+            .header-info h1 {
+                font-size: 18px;
+            }
+            
+            .header-info .subtitle {
+                font-size: 13px;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .topic-button {
+                padding: 14px 8px;
+                font-size: 12px;
+                min-height: 75px;
+            }
+            
+            .button-icon {
+                font-size: 20px;
+            }
+            
+            .chat-body {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .message {
+                max-width: 90%;
+                padding: 14px 16px;
+            }
+            
+            .action-button {
+                font-size: 14px;
+                padding: 14px;
+            }
+            
+            .scroll-indicator {
+                bottom: 10px;
+                right: 10px;
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+            
+            .quick-scroll-btn {
+                bottom: 10px;
+                right: 50px;
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+        }
+
+        /* Móvil (576px y menos) */
+        @media (max-width: 576px) {
+            body {
+                padding: 0;
+                background: white;
+                min-height: 100vh;
+                align-items: flex-start;
+            }
+            
+            .chatbot-container {
+                height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+                max-height: none;
+                flex-direction: column;
+            }
+            
+            .mobile-menu-toggle {
+                display: flex;
+                bottom: 25px;
+                right: 25px;
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+                box-shadow: 0 6px 20px rgba(0, 99, 65, 0.4);
+            }
+            
+            .buttons-panel {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 85%;
+                max-width: 320px;
+                height: 100%;
+                z-index: 1000;
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-top: none;
+                border-left: 1px solid #eee;
+                max-height: none;
+                padding: 20px 15px;
+                background: white;
+                box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+            }
+            
+            .buttons-panel.active {
+                right: 0;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            .chat-panel {
+                width: 100%;
+                height: 100%;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .topic-button {
+                padding: 12px 8px;
+                font-size: 11px;
+                min-height: 65px;
+                border-radius: 10px;
+            }
+            
+            .button-icon {
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .quick-actions {
+                gap: 10px;
+            }
+            
+            .action-button {
+                padding: 12px;
+                font-size: 13px;
+                border-radius: 10px;
+            }
+            
+            .chat-header {
+                padding: 15px;
+                border-radius: 0;
+            }
+            
+            .header-info h1 {
+                font-size: 17px;
+            }
+            
+            .header-info .subtitle {
+                font-size: 12px;
+            }
+            
+            .header-info .tagline {
+                font-size: 10px;
+                padding: 3px 8px;
+                margin-top: 5px;
+            }
+            
+            .chat-body {
+                padding: 15px 12px;
+                gap: 12px;
+            }
+            
+            .message {
+                max-width: 95%;
+                padding: 12px 14px;
+                border-radius: 15px;
+            }
+            
+            .scroll-indicator {
+                bottom: 20px;
+                right: 15px;
+            }
+            
+            .quick-scroll-btn {
+                bottom: 20px;
+                right: 60px;
+            }
+        }
+
+        /* Móvil pequeño (480px y menos) */
+        @media (max-width: 480px) {
+            .scroll-indicator {
+                bottom: 20px;
+                right: 10px;
+            }
+            
+            .quick-scroll-btn {
+                bottom: 20px;
+                right: 55px;
+            }
+        }
+
+        /* Móvil muy pequeño (360px y menos) */
+        @media (max-width: 360px) {
+            .scroll-indicator {
+                bottom: 20px;
+                right: 8px;
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            
+            .quick-scroll-btn {
+                bottom: 20px;
+                right: 45px;
+                width: 26px;
+                height: 26px;
+            }
+        }
+
+        /* Orientación horizontal en móviles */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .scroll-indicator {
+                bottom: 15px;
+                right: 15px;
+                width: 30px;
+                height: 30px;
+            }
+            
+            .quick-scroll-btn {
+                bottom: 15px;
+                right: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+    <div id="intro-screen">
+  <div class="intro-contenido">
+    <div class="intro-logo">
+      <svg viewBox="-110 -90 540 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad-conalep" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#00c87a"/>
+            <stop offset="50%"  stop-color="#009955"/>
+            <stop offset="100%" stop-color="#006633"/>
+          </linearGradient>
+        </defs>
+        <path class="linea-sombra linea-top"       d="M-110 55  Q160 -130 430 75"/>
+        <path class="linea-sombra linea-bottom"    d="M-110 185 Q165  330 430 165"/>
+        <path class="linea-principal linea-top"    d="M-110 55  Q160 -130 430 75"/>
+        <path class="linea-principal linea-bottom" d="M-110 185 Q165  330 430 165"/>
+      </svg>
+    </div>
+    <div class="intro-titulo">CONALEP</div>
+    <div class="intro-subtitulo">Veracruz</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    <div class="chatbot-container">
+        <!-- Barra de progreso de scroll -->
+        <div class="scroll-progress">
+            <div class="scroll-progress-bar" id="scroll-progress-bar"></div>
+        </div>
+
+        <!-- Panel izquierdo - Chat -->
+        <div class="chat-panel">
+            <!-- Header -->
+            <div class="chat-header">
+                <div class="bot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="header-info">
+                    <h1>CONAVERSE Bot</h1>
+                    <div class="subtitle">CONALEP 165 Tuxpan - Jesús Reyes Heroles</div>
+                    <div class="tagline">ORGULLOSAMENTE CONALEP</div>
+                </div>
+            </div>
+
+            <!-- Chat Body con scroll -->
+            <div class="chat-body custom-scrollbar" id="chat-body">
+                <!-- Mensajes aparecerán aquí -->
+            </div>
+
+            <!-- Botón para scroll rápido -->
+            <div class="quick-scroll-btn" id="quick-scroll-btn" title="Scroll rápido">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+
+            <!-- Indicador de scroll -->
+            <div class="scroll-indicator" id="scroll-indicator" title="Ir al final">
+                <i class="fas fa-arrow-down"></i>
+            </div>
+        </div>
+
+        <!-- Panel derecho - Botones -->
+        <div class="buttons-panel custom-scrollbar" id="buttons-panel">
+            <!-- Indicador de posición de scroll -->
+            <div class="panel-scroll-indicator" id="panel-scroll-indicator">
+                <span id="panel-scroll-percent">0%</span>
+            </div>
+
+            <div class="section-title">
+                <i class="fas fa-comments"></i>
+                Temas de consulta
+            </div>
+            
+            <div class="buttons-grid">
+                <button class="topic-button" data-topic="carreras">
+                    <div class="button-icon"><i class="fas fa-graduation-cap"></i></div>
+                    Carreras
+                </button>
+                <button class="topic-button" data-topic="inscripciones">
+                    <div class="button-icon"><i class="fas fa-file-signature"></i></div>
+                    Inscripción
+                </button>
+                <button class="topic-button" data-topic="becas">
+                    <div class="button-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    Becas
+                </button>
+                <button class="topic-button" data-topic="horarios">
+                    <div class="button-icon"><i class="fas fa-clock"></i></div>
+                    Horarios
+                </button>
+                <button class="topic-button" data-topic="telefono">
+                    <div class="button-icon"><i class="fas fa-phone-alt"></i></div>
+                    Teléfono
+                </button>
+                <button class="topic-button" data-topic="ubicacion">
+                    <div class="button-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    Ubicación
+                </button>
+                <button class="topic-button" data-topic="uniforme">
+                    <div class="button-icon"><i class="fas fa-tshirt"></i></div>
+                    Uniforme
+                </button>
+                <button class="topic-button" data-topic="servicios">
+                    <div class="button-icon"><i class="fas fa-concierge-bell"></i></div>
+                    Servicios
+                </button>
+                <button class="topic-button" data-topic="documentos">
+                    <div class="button-icon"><i class="fas fa-file-alt"></i></div>
+                    Documentos
+                </button>
+                <button class="topic-button" data-topic="biblioteca">
+                    <div class="button-icon"><i class="fas fa-book"></i></div>
+                    Biblioteca
+                </button>
+                <button class="topic-button" data-topic="practicas">
+                    <div class="button-icon"><i class="fas fa-briefcase"></i></div>
+                    Prácticas
+                </button>
+                <button class="topic-button" data-topic="titulacion">
+                    <div class="button-icon"><i class="fas fa-user-graduate"></i></div>
+                    Titulación
+                </button>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="action-button" data-topic="nombre_completo">
+                    <i class="fas fa-school"></i>
+                    Nombre del Plantel
+                </button>
+                <button class="action-button" data-topic="director">
+                    <i class="fas fa-user-tie"></i>
+                    Información de la Directora
+                </button>
+                <button class="action-button" data-topic="calendario">
+                    <i class="fas fa-calendar-alt"></i>
+                    Calendario Escolar
+                </button>
+                <button class="action-button" data-topic="credencial">
+                    <i class="fas fa-id-card"></i>
+                    Credencial de Estudiante
+                </button>
+            </div>
+            
+            <!-- Info adicional -->
+            <div class="panel-info">
+                <div class="info-title">
+                    <i class="fas fa-info-circle"></i>
+                    Cómo usar el bot
+                </div>
+                <div class="info-content">
+                    <p>💡 <strong>Solo interactúa con los botones</strong></p>
+                    <p>Selecciona cualquier tema para obtener información detallada del CONALEP 165 Tuxpan.</p>
+                    <div class="info-row" style="margin-top: 10px;">
+                        <div class="info-icon"><i class="fas fa-phone"></i></div>
+                        <div><strong>Teléfono:</strong> 783 834 4408</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-icon"><i class="fas fa-clock"></i></div>
+                        <div><strong>Horario:</strong> 8:00 AM - 4:00 PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botón para móvil y overlay -->
+        <button class="mobile-menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="overlay" id="overlay"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatBody = document.getElementById('chat-body');
+            const topicButtons = document.querySelectorAll('.topic-button, .action-button');
+            const menuToggle = document.getElementById('menu-toggle');
+            const buttonsPanel = document.getElementById('buttons-panel');
+            const overlay = document.getElementById('overlay');
+            const scrollIndicator = document.getElementById('scroll-indicator');
+            const quickScrollBtn = document.getElementById('quick-scroll-btn');
+            const scrollProgressBar = document.getElementById('scroll-progress-bar');
+            const panelScrollIndicator = document.getElementById('panel-scroll-indicator');
+            const panelScrollPercent = document.getElementById('panel-scroll-percent');
+            
+            let isMobileMenuOpen = false;
+            let autoScrollEnabled = true;
+            let scrollTimeout;
+
+            // Base de conocimiento con información de CONALEP
+            const knowledgeBase = {
+                "inscripciones": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-file-signature"></i>
+                            Proceso de Inscripción
+                        </div>
+                        <div class="card-content">
+                            <p><strong>El proceso de inscripción requiere:</strong></p>
+                            <ul class="requirement-list">
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-file-alt"></i></div>
+                                    <div class="requirement-text"><strong>Solicitud</strong> de inscripción</div>
+                                </li>
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-graduation-cap"></i></div>
+                                    <div class="requirement-text"><strong>Certificado de Secundaria</strong> (original y 2 copias)</div>
+                                </li>
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-birthday-cake"></i></div>
+                                    <div class="requirement-text"><strong>Acta de Nacimiento</strong> (original y 2 copias)</div>
+                                </li>
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-id-card"></i></div>
+                                    <div class="requirement-text"><strong>CURP</strong> ampliada al 200%</div>
+                                </li>
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-receipt"></i></div>
+                                    <div class="requirement-text"><strong>Comprobante de pago</strong> de inscripción</div>
+                                </li>
+                            </ul>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                                    <div><strong>Próxima fecha de inscripción:</strong> Agosto</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div><strong>Lugar:</strong> Ventanilla de Servicios Escolares</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "carreras": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Carreras Disponibles
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Actualmente ofrecemos tres carreras:</strong></p>
+                            
+                            <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #006341;">
+                                <h3 style="color: #006341; margin-bottom: 10px;">
+                                    <i class="fas fa-user-nurse"></i> Profesional Técnico Bachiller en Enfermería General
+                                </h3>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                    <div><strong>Duración:</strong> 3 años (6 semestres)</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-sun"></i></div>
+                                    <div><strong>Turno:</strong> Matutino / Vespertino</div>
+                                </div>
+                                <div class="badge">Incluye prácticas hospitalarias</div>
+                            </div>
+                            
+                            <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #006341;">
+                                <h3 style="color: #006341; margin-bottom: 10px;">
+                                    <i class="fas fa-tools"></i> PTB en Mantenimiento de Motores a Diésel
+                                </h3>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                    <div><strong>Duración:</strong> 3 años (6 semestres)</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-sun"></i></div>
+                                    <div><strong>Turno:</strong> Matutino</div>
+                                </div>
+                                <div class="badge">Taller especializado incluido</div>
+                            </div>
+                            
+                            <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #006341;">
+                                <h3 style="color: #006341; margin-bottom: 10px;">
+                                    <i class="fas fa-laptop-code"></i> PTB en Informática
+                                </h3>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                    <div><strong>Duración:</strong> 3 años (6 semestres)</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-sun"></i></div>
+                                    <div><strong>Turno:</strong> Matutino / Vespertino</div>
+                                </div>
+                                <div class="badge">Laboratorio de cómputo moderno</div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "becas": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            Becas y Apoyos
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Ofrecemos becas de la Fundación CONALEP y becas federales como la <em>Beca Benito Juárez</em>.</strong></p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                                <div style="padding: 15px; background: #e8f5e9; border-radius: 10px; text-align: center;">
+                                    <i class="fas fa-university" style="font-size: 30px; color: #006341; margin-bottom: 10px;"></i>
+                                    <h4 style="color: #006341; margin-bottom: 5px;">Beca Benito Juárez</h4>
+                                    <p style="font-size: 13px;">Beca federal para educación media superior</p>
+                                    <div class="badge" style="background: #28a745;">Federal</div>
+                                </div>
+                                
+                                <div style="padding: 15px; background: #e3f2fd; border-radius: 10px; text-align: center;">
+                                    <i class="fas fa-flag" style="font-size: 30px; color: #006341; margin-bottom: 10px;"></i>
+                                    <h4 style="color: #006341; margin-bottom: 5px;">Becas Estatales</h4>
+                                    <p style="font-size: 13px;">Programas de apoyo del gobierno de Veracruz</p>
+                                    <div class="badge" style="background: #17a2b8;">Estatal</div>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                                    <div><strong>Convocatoria:</strong> Portal oficial CONALEP y sección de Dirección</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "telefono": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-phone-alt"></i>
+                            Contacto Telefónico
+                        </div>
+                        <div class="card-content">
+                            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px;">
+                                <i class="fas fa-phone-volume" style="font-size: 50px; color: #006341; margin-bottom: 15px;"></i>
+                                <h2 style="color: #006341; font-size: 28px;">+52 783 834 4408</h2>
+                                <p style="color: #666; margin-top: 10px;">Teléfono principal del plantel</p>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <h4 style="color: #006341; margin-bottom: 15px;">
+                                    <i class="fas fa-clock"></i> Horario de atención telefónica
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div style="padding: 10px; background: white; border-radius: 8px;">
+                                        <strong>Lunes a Viernes</strong><br>
+                                        8:00 AM - 4:00 PM
+                                    </div>
+                                    <div style="padding: 10px; background: white; border-radius: 8px;">
+                                        <strong>Sábados y Domingos</strong><br>
+                                        Cerrado
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "ubicacion": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Ubicación del Plantel
+                        </div>
+                        <div class="card-content">
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px;">
+                                <h4 style="color: #006341; margin-bottom: 10px;">Dirección completa:</h4>
+                                <p style="font-size: 16px; font-weight: 600;">
+                                    <i class="fas fa-road"></i> Avenida Calle Segunda de General Silva<br>
+                                    <i class="fas fa-city"></i> Tuxpan, Veracruz<br>
+                                    <i class="fas fa-mail-bulk"></i> Código Postal: 92850
+                                </p>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <h4 style="color: #006341; margin-bottom: 15px;">
+                                    <i class="fas fa-compass"></i> Cómo llegar
+                                </h4>
+                                <ul style="padding-left: 20px;">
+                                    <li>Ubicado cerca del centro de Tuxpan</li>
+                                    <li>Accesible por transporte público</li>
+                                    <li>Zona con estacionamiento disponible</li>
+                                    <li>Acceso para personas con discapacidad</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "nombre_completo": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-school"></i>
+                            Nombre del Plantel
+                        </div>
+                        <div class="card-content">
+                            <div style="text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #f0f9f0 0%, #e8f5e9 100%); border-radius: 15px;">
+                                <i class="fas fa-landmark" style="font-size: 60px; color: #006341; margin-bottom: 20px;"></i>
+                                <h2 style="color: #006341; font-size: 24px; line-height: 1.4;">
+                                    CONALEP 165<br>
+                                    Jesús Reyes Heroles<br>
+                                    <span style="font-size: 18px; color: #004d33;">Tuxpan, Veracruz</span>
+                                </h2>
+                                <div style="margin-top: 20px;">
+                                    <span class="badge" style="font-size: 14px; padding: 8px 20px;">
+                                        <i class="fas fa-award"></i> Orgullosamente CONALEP
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "director": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-user-tie"></i>
+                            Información de la Directora
+                        </div>
+                        <div class="card-content">
+                            <div style="text-align: center; padding: 20px; margin-bottom: 20px;">
+                                <div style="width: 100px; height: 100px; background: #e8f5e9; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #006341;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h2 style="color: #006341; font-size: 22px;">LIC. PATRICIA CANOVAS VAZQUEZ</h2>
+                                <p style="color: #666; margin-top: 5px;">Directora del Plantel</p>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <h4 style="color: #006341; margin-bottom: 15px;">
+                                    <i class="fas fa-clock"></i> Horario de atención
+                                </h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div style="padding: 12px; background: white; border-radius: 8px; text-align: center;">
+                                        <strong>Lunes a Viernes</strong><br>
+                                        9:00 AM - 3:00 PM
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "horarios": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-clock"></i>
+                            Horarios de Clases
+                        </div>
+                        <div class="card-content">
+                            <p><strong>El horario de clases regular es:</strong></p>
+                            
+                            <div style="margin: 20px 0;">
+                                <div style="padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 15px;">
+                                    <h4 style="color: #006341; margin-bottom: 10px;">
+                                        <i class="fas fa-sun"></i> Turno Matutino
+                                    </h4>
+                                    <div class="info-row">
+                                        <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                        <div><strong>Horario:</strong> 7:00 AM - 2:00 PM</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                                    <h4 style="color: #006341; margin-bottom: 10px;">
+                                        <i class="fas fa-moon"></i> Turno Vespertino
+                                    </h4>
+                                    <div class="info-row">
+                                        <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                        <div><strong>Horario:</strong> 2:00 PM - 9:00 PM</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-building"></i></div>
+                                    <div><strong>Oficina administrativa:</strong> 8:00 AM - 4:00 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "uniforme": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-tshirt"></i>
+                            Uniforme Escolar
+                        </div>
+                        <div class="card-content">
+                            <p><strong>El uso del uniforme es obligatorio:</strong></p>
+                            
+                            <div style="margin: 20px 0;">
+                                <div style="padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 15px;">
+                                    <h4 style="color: #006341; margin-bottom: 10px;">
+                                        <i class="fas fa-user"></i> Uniforme Diario
+                                    </h4>
+                                    <ul style="padding-left: 20px;">
+                                        <li><strong>Playera polo</strong> blanca con logo CONALEP</li>
+                                        <li><strong>Pantalón gris</strong> de vestir (hombre)</li>
+                                        <li><strong>Falda gris</strong> tableada (mujeres)</li>
+                                        <li><strong>Zapatos negros</strong> cerrados</li>
+                                    </ul>
+                                </div>
+                                
+                                <div style="padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                                    <h4 style="color: #006341; margin-bottom: 10px;">
+                                        <i class="fas fa-running"></i> Uniforme Deportivo
+                                    </h4>
+                                    <ul style="padding-left: 20px;">
+                                        <li>Se usa los días de educación física</li>
+                                        <li>Playera blanca con logo CONALEP</li>
+                                        <li>Short/pants gris deportivo</li>
+                                        <li>Tenis blancos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "servicios": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-concierge-bell"></i>
+                            Servicios del Plantel
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Ofrecemos servicios como:</strong></p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                                <div style="padding: 15px; background: #e8f5e9; border-radius: 10px; text-align: center;">
+                                    <i class="fas fa-book" style="font-size: 30px; color: #006341; margin-bottom: 10px;"></i>
+                                    <h4 style="color: #006341; margin-bottom: 5px;">Biblioteca</h4>
+                                    <p style="font-size: 13px;">Horario: 8:00 AM - 5:00 PM</p>
+                                </div>
+                                
+                                <div style="padding: 15px; background: #e3f2fd; border-radius: 10px; text-align: center;">
+                                    <i class="fas fa-laptop" style="font-size: 30px; color: #006341; margin-bottom: 10px;"></i>
+                                    <h4 style="color: #006341; margin-bottom: 5px;">Centro de Cómputo</h4>
+                                    <p style="font-size: 13px;">Con internet y software especializado</p>
+                                </div>
+                                
+                                <div style="padding: 15px; background: #fff3cd; border-radius: 10px; text-align: center;">
+                                    <i class="fas fa-tools" style="font-size: 30px; color: #006341; margin-bottom: 10px;"></i>
+                                    <h4 style="color: #006341; margin-bottom: 5px;">Taller de Motores</h4>
+                                    <p style="font-size: 13px;">Diésel especializado</p>
+                                </div>
+                                
+                                <div style="padding: 15px; background: #f8d7da; border-radius: 10px; text-align: center;">
+                                    <i class="fas fa-utensils" style="font-size: 30px; color: #006341; margin-bottom: 10px;"></i>
+                                    <h4 style="color: #006341; margin-bottom: 5px;">Cafetería</h4>
+                                    <p style="font-size: 13px;">Alimentos saludables</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "titulacion": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-user-graduate"></i>
+                            Proceso de Titulación
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Para la titulación, necesitas:</strong></p>
+                            
+                            <ul class="requirement-list">
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-check-circle"></i></div>
+                                    <div class="requirement-text"><strong>Aprobar todas tus materias</strong></div>
+                                </li>
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-hands-helping"></i></div>
+                                    <div class="requirement-text"><strong>Completar tu servicio social</strong></div>
+                                </li>
+                                <li>
+                                    <div class="requirement-icon"><i class="fas fa-file-signature"></i></div>
+                                    <div class="requirement-text"><strong>Hacer tus practicas profesionales</strong></div>
+                                </li>
+                            </ul>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-info-circle"></i></div>
+                                    <div><strong>Consulta:</strong> Oficina de Servicios Escolares para más detalles</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "practicas": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-briefcase"></i>
+                            Prácticas Profesionales
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Las prácticas profesionales se realizan en:</strong></p>
+                            
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                                    <div><strong>Semestres:</strong> 5TO y 6TO (últimos semestres)</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-building"></i></div>
+                                    <div><strong>Departamento responsable:</strong> Vinculación</div>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <p><strong>El departamento de Vinculación te ayudará a encontrar una empresa adecuada para realizar tus prácticas profesionales.</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "calendario": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            Calendario Escolar
+                        </div>
+                        <div class="card-content">
+                            <p><strong>El calendario escolar incluye:</strong></p>
+                            
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
+                                <ul style="padding-left: 20px;">
+                                    <li><strong>Fechas de rúbricas</strong> de evaluación</li>
+                                    <li><strong>Periodos vacacionales</strong></li>
+                                    <li><strong>Días festivos</strong> oficiales</li>
+                                    <li><strong>Exámenes</strong> parciales y finales</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-map-signs"></i></div>
+                                    <div><strong>Disponible en:</strong> Cartelera de Servicios Escolares y sección de Archivos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "documentos": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-file-alt"></i>
+                            Solicitud de Documentos
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Para solicitar documentos como:</strong></p>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                                <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                                    <i class="fas fa-file-certificate"></i>
+                                    <p style="margin-top: 5px; font-size: 13px;">Constancias de estudio</p>
+                                </div>
+                                <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                                    <i class="fas fa-certificate"></i>
+                                    <p style="margin-top: 5px; font-size: 13px;">Certificados parciales</p>
+                                </div>
+                                <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                                    <i class="fas fa-scroll"></i>
+                                    <p style="margin-top: 5px; font-size: 13px;">Kardex</p>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                    <div><strong>Lugar:</strong> Ventanilla de Servicios Escolares</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-id-card"></i></div>
+                                    <div><strong>Requisito:</strong> Tu credencial de estudiante</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                    <div><strong>Costo:</strong> Mínimo (consulta tarifas actuales)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "biblioteca": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-book"></i>
+                            Biblioteca
+                        </div>
+                        <div class="card-content">
+                            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px;">
+                                <i class="fas fa-clock" style="font-size: 40px; color: #006341; margin-bottom: 10px;"></i>
+                                <h3 style="color: #006341; margin-bottom: 10px;">Horario de atención</h3>
+                                <p style="font-size: 18px; font-weight: 600;">8:00 AM - 5:00 PM</p>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <h4 style="color: #006341; margin-bottom: 15px;">
+                                    <i class="fas fa-check-circle"></i> Servicios disponibles
+                                </h4>
+                                <ul style="padding-left: 20px;">
+                                    <li>Consulta de material de estudio</li>
+                                    <li>Uso de internet</li>
+                                    <li>Préstamo de libros (máximo 3 por semana)</li>
+                                    <li>Espacios de estudio individual y grupal</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "credencial": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-id-card"></i>
+                            Credencial de Estudiante
+                        </div>
+                        <div class="card-content">
+                            <p><strong>La credencial de estudiante es necesaria para:</strong></p>
+                            
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
+                                <ul style="padding-left: 20px;">
+                                    <li>Acceder a las instalaciones del plantel</li>
+                                    <li>Solicitar becas y apoyos</li>
+                                    <li>Realizar trámites en Servicios Escolares</li>
+                                    <li>Identificación oficial dentro del plantel</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-calendar"></i></div>
+                                    <div><strong>Trámite:</strong> Al inicio del semestre</div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="info-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                                    <div><strong>Si la perdiste:</strong> Repórtalo en la Oficina Administrativa</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                
+                "saludo": `
+                    <div class="welcome-message">
+                        <div class="welcome-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="welcome-title">¡Hola! Soy CONAVERSE Bot</div>
+                        <div class="welcome-text">
+                            Tu asistente virtual del <strong>CONALEP 165 Tuxpan, Jesús Reyes Heroles</strong>.<br>
+                            Estoy aquí para brindarte información actualizada sobre nuestro plantel.
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px;">
+                            <div style="padding: 10px; background: white; border-radius: 8px; text-align: center;">
+                                <i class="fas fa-graduation-cap" style="color: #006341;"></i>
+                                <p style="font-size: 12px; margin-top: 5px;">3 Carreras</p>
+                            </div>
+                            <div style="padding: 10px; background: white; border-radius: 8px; text-align: center;">
+                                <i class="fas fa-calendar-alt" style="color: #006341;"></i>
+                                <p style="font-size: 12px; margin-top: 5px;">Inscripciones</p>
+                            </div>
+                            <div style="padding: 10px; background: white; border-radius: 8px; text-align: center;">
+                                <i class="fas fa-phone-alt" style="color: #006341;"></i>
+                                <p style="font-size: 12px; margin-top: 5px;">Contacto</p>
+                            </div>
+                        </div>
+                        <p style="margin-top: 20px; color: #006341; font-weight: 600;">
+                            <i class="fas fa-hand-point-right"></i> Selecciona cualquier tema de los botones
+                        </p>
+                    </div>
+                `,
+                
+                "despedida": `
+                    <div class="info-card">
+                        <div class="card-title">
+                            <i class="fas fa-handshake"></i>
+                            ¡Hasta pronto!
+                        </div>
+                        <div class="card-content">
+                            <div style="text-align: center; padding: 20px;">
+                                <i class="fas fa-smile" style="font-size: 50px; color: #006341; margin-bottom: 15px;"></i>
+                                <h3 style="color: #006341; margin-bottom: 10px;">¡De nada!</h3>
+                                <p>Espero que la información te sea útil. Si tienes otra consulta, estoy aquí para ayudarte.</p>
+                                <div class="badge" style="margin-top: 15px;">
+                                    <i class="fas fa-heart"></i> Orgullosamente CONALEP
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+
+            // Función para agregar mensajes al chat
+            function appendMessage(sender, text, isHTML = false) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+                
+                const messageHeader = document.createElement('div');
+                messageHeader.classList.add('message-header');
+                
+                if (sender === 'user') {
+                    messageHeader.innerHTML = `<i class="fas fa-user user-icon"></i> Tú`;
+                } else {
+                    messageHeader.innerHTML = `<i class="fas fa-robot bot-icon"></i> CONAVERSE Bot`;
+                }
+                
+                messageElement.appendChild(messageHeader);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('message-content');
+                
+                if (isHTML) {
+                    contentDiv.innerHTML = text;
+                } else {
+                    contentDiv.innerHTML = text;
+                }
+                
+                messageElement.appendChild(contentDiv);
+                chatBody.appendChild(messageElement);
+                
+                // Scroll automático si está habilitado
+                if (autoScrollEnabled) {
+                    scrollToBottom();
+                }
+                
+                // Actualizar indicador de scroll
+                updateScrollIndicator();
+            }
+
+            // Función para hacer scroll suave al final
+            function scrollToBottom(instant = false) {
+                if (instant) {
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                } else {
+                    chatBody.scrollTo({
+                        top: chatBody.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Animar el indicador de scroll
+                if (scrollIndicator) {
+                    scrollIndicator.classList.add('scrolling');
+                    setTimeout(() => {
+                        scrollIndicator.classList.remove('scrolling');
+                    }, 1000);
+                }
+            }
+
+            // Función para actualizar el indicador de scroll
+            function updateScrollIndicator() {
+                if (!chatBody) return;
+                
+                const scrollTop = chatBody.scrollTop;
+                const scrollHeight = chatBody.scrollHeight;
+                const clientHeight = chatBody.clientHeight;
+                
+                // Calcular porcentaje de scroll
+                const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+                
+                // Actualizar barra de progreso
+                if (scrollProgressBar) {
+                    scrollProgressBar.style.width = `${scrollPercent}%`;
+                }
+                
+                // Mostrar/ocultar indicador de scroll
+                if (scrollIndicator) {
+                    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+                    if (isNearBottom) {
+                        scrollIndicator.classList.remove('visible');
+                    } else {
+                        scrollIndicator.classList.add('visible');
+                    }
+                }
+                
+                // Mostrar/ocultar botón de scroll rápido
+                if (quickScrollBtn) {
+                    const isScrolled = scrollTop > 100;
+                    if (isScrolled) {
+                        quickScrollBtn.classList.add('visible');
+                    } else {
+                        quickScrollBtn.classList.remove('visible');
+                    }
+                }
+            }
+
+            // Función para actualizar indicador de scroll en panel derecho
+            function updatePanelScrollIndicator() {
+                if (!buttonsPanel) return;
+                
+                const scrollTop = buttonsPanel.scrollTop;
+                const scrollHeight = buttonsPanel.scrollHeight;
+                const clientHeight = buttonsPanel.clientHeight;
+                
+                // Calcular porcentaje de scroll
+                const scrollPercent = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
+                
+                // Actualizar indicador
+                if (panelScrollIndicator && panelScrollPercent) {
+                    panelScrollPercent.textContent = `${scrollPercent}%`;
+                    
+                    if (scrollPercent > 5) {
+                        panelScrollIndicator.classList.add('visible');
+                    } else {
+                        panelScrollIndicator.classList.remove('visible');
+                    }
+                }
+            }
+
+            // Función para scroll rápido (mitad de página)
+            function quickScroll() {
+                const currentScroll = chatBody.scrollTop;
+                const targetScroll = currentScroll + (chatBody.clientHeight * 0.8);
+                
+                chatBody.scrollTo({
+                    top: targetScroll,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Detectar cuando el usuario hace scroll manual
+            function handleManualScroll() {
+                const scrollTop = chatBody.scrollTop;
+                const scrollHeight = chatBody.scrollHeight;
+                const clientHeight = chatBody.clientHeight;
+                
+                // Desactivar auto-scroll si el usuario está viendo mensajes anteriores
+                const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+                autoScrollEnabled = isAtBottom;
+                
+                // Actualizar indicadores
+                updateScrollIndicator();
+                
+                // Limpiar timeout anterior
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+                
+                // Reactivar auto-scroll después de 2 segundos de inactividad
+                scrollTimeout = setTimeout(() => {
+                    autoScrollEnabled = true;
+                }, 2000);
+            }
+
+            // Mostrar mensaje de bienvenida
+            function displayWelcomeMessage() {
+                setTimeout(() => {
+                    appendMessage('bot', knowledgeBase.saludo, true);
+                    
+                    // Mostrar mensaje de instrucción después del saludo
+                    setTimeout(() => {
+                        const instructionMessage = `
+                            <div class="instruction-message">
+                                <div class="instruction-icon">
+                                    <i class="fas fa-mouse-pointer"></i>
+                                </div>
+                                <div class="instruction-text">
+                                    💡 <strong>Solo interactúa con los botones</strong><br>
+                                    Selecciona cualquier tema del panel lateral para obtener información
+                                </div>
+                            </div>
+                        `;
+                        appendMessage('bot', instructionMessage, true);
+                    }, 1000);
+                }, 500);
+            }
+
+            // Función para mostrar/ocultar menú en móvil
+            function toggleMobileMenu() {
+                isMobileMenuOpen = !isMobileMenuOpen;
+                buttonsPanel.classList.toggle('active', isMobileMenuOpen);
+                overlay.classList.toggle('active', isMobileMenuOpen);
+                menuToggle.classList.toggle('active', isMobileMenuOpen);
+                menuToggle.innerHTML = isMobileMenuOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+                
+                // Prevenir scroll del body cuando el menú está abierto
+                document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+            }
+
+            // Función para manejar clic en botón de tema
+            function handleTopicClick(button) {
+                const topic = button.getAttribute('data-topic');
+                
+                // Mostrar mensaje del usuario (qué botón presionó)
+                let buttonText = button.querySelector('.button-icon') 
+                    ? button.querySelector('.button-icon').nextSibling.textContent.trim()
+                    : button.textContent.trim();
+                
+                appendMessage('user', `Seleccioné: ${buttonText}`);
+                
+                // Cerrar menú móvil si está abierto
+                if (isMobileMenuOpen) {
+                    toggleMobileMenu();
+                }
+                
+                // Activar auto-scroll para nuevo mensaje
+                autoScrollEnabled = true;
+                
+                // Mostrar respuesta después de un breve retraso
+                setTimeout(() => {
+                    const response = knowledgeBase[topic];
+                    if (response) {
+                        appendMessage('bot', response, true);
+                    } else {
+                        // Si no hay respuesta específica
+                        appendMessage('bot', `
+                            <div class="info-card">
+                                <div class="card-title">
+                                    <i class="fas fa-info-circle"></i>
+                                    Información no disponible
+                                </div>
+                                <div class="card-content">
+                                    <p>Disculpa, no tengo información sobre ese tema en este momento.</p>
+                                    <p>Por favor contacta directamente al plantel:</p>
+                                    <div style="text-align: center; margin: 15px 0; padding: 10px; background: #f8d7da; border-radius: 8px;">
+                                        <strong style="color: #dc3545; font-size: 16px;">Tel: +52 783 834 4408</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        `, true);
+                    }
+                }, 500);
+            }
+
+            // Inicializar eventos de scroll
+            function initScrollEvents() {
+                // Event listeners para scroll en chat
+                chatBody.addEventListener('scroll', handleManualScroll);
+                chatBody.addEventListener('wheel', handleManualScroll);
+                chatBody.addEventListener('touchmove', handleManualScroll);
+                
+                // Event listener para scroll en panel derecho
+                buttonsPanel.addEventListener('scroll', updatePanelScrollIndicator);
+                
+                // Event listener para botón de scroll al final
+                if (scrollIndicator) {
+                    scrollIndicator.addEventListener('click', function() {
+                        scrollToBottom();
+                    });
+                }
+                
+                // Event listener para botón de scroll rápido
+                if (quickScrollBtn) {
+                    quickScrollBtn.addEventListener('click', quickScroll);
+                }
+                
+                // Actualizar indicadores iniciales
+                updateScrollIndicator();
+                updatePanelScrollIndicator();
+            }
+
+            // Agregar event listeners a los botones de temas
+            topicButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleTopicClick(this);
+                });
+            });
+
+            // Event listener para botón de menú móvil
+            menuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleMobileMenu();
+            });
+            
+            // Event listener para cerrar menú con overlay
+            overlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleMobileMenu();
+            });
+
+            // Detectar clics fuera del menú en móvil
+            document.addEventListener('click', function(event) {
+                if (isMobileMenuOpen && 
+                    !buttonsPanel.contains(event.target) && 
+                    !menuToggle.contains(event.target) &&
+                    event.target !== overlay) {
+                    toggleMobileMenu();
+                }
+            });
+
+            // Cerrar menú con tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isMobileMenuOpen) {
+                    toggleMobileMenu();
+                }
+            });
+
+            // Scroll con teclas
+            document.addEventListener('keydown', function(e) {
+                // Page Down para scroll rápido
+                if (e.key === 'PageDown' && !e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    quickScroll();
+                }
+                
+                // End para ir al final
+                if (e.key === 'End' && !e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    scrollToBottom();
+                }
+            });
+
+            // Ajustar diseño en carga según tamaño de pantalla
+            function checkScreenSize() {
+                if (window.innerWidth <= 576) {
+                    buttonsPanel.classList.remove('active');
+                    overlay.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    isMobileMenuOpen = false;
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                    document.body.style.overflow = '';
+                } else {
+                    buttonsPanel.classList.add('active');
+                    overlay.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    isMobileMenuOpen = false;
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                    document.body.style.overflow = '';
+                }
+                
+                // Actualizar indicadores después de redimensionar
+                setTimeout(() => {
+                    updateScrollIndicator();
+                    updatePanelScrollIndicator();
+                }, 100);
+            }
+
+            // Prevenir zoom en doble toque en iOS
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // Verificar tamaño de pantalla al cargar y al redimensionar
+            window.addEventListener('load', function() {
+                checkScreenSize();
+                initScrollEvents();
+                displayWelcomeMessage();
+            });
+            
+            window.addEventListener('resize', checkScreenSize);
+
+            // Prevenir comportamiento de pull-to-refresh en móvil
+            document.addEventListener('touchmove', function(e) {
+                if (isMobileMenuOpen) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Inicializar el chat con el mensaje de bienvenida
+            displayWelcomeMessage();
+        });
+    </script>
+
+
+
+
+
+
+<script>
+  // La animación termina a los ~3.5s, luego fade out de 0.8s
+  setTimeout(function () {
+    var intro = document.getElementById('intro-screen');
+    intro.classList.add('ocultar');
+    setTimeout(function () { intro.remove(); }, 800);
+  }, 3500);
+</script>
+
+
+
+</body>
+</html>

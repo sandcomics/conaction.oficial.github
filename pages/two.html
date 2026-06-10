@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login CONALEP</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f5f5;
+      --color-border-tertiary: rgba(0,0,0,0.15);
+      --color-border-secondary: rgba(0,0,0,0.3);
+      --color-text-primary: #1a1a1a;
+      --color-text-secondary: #555555;
+      --color-text-tertiary: #888888;
+      --color-text-warning: #b45309;
+      --color-text-danger: #b91c1c;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+    }
+    .login-wrap {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #004d28 0%, #007a42 60%, #009955 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .login-card {
+      background: var(--color-background-primary);
+      border-radius: var(--border-radius-lg);
+      border: 0.5px solid var(--color-border-tertiary);
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 380px;
+    }
+    .logo-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      background: #006633;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-icon svg { width: 36px; height: 36px; }
+    .logo-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #006633;
+      letter-spacing: 3px;
+    }
+    .logo-sub {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      letter-spacing: 2px;
+    }
+    .field-label {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .field-group { margin-bottom: 1rem; }
+    .field-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      font-size: 15px;
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field-input:focus { border-color: #009955; box-shadow: 0 0 0 3px rgba(0,153,85,0.15); }
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #6b052c;
+      border: none;
+      border-radius: var(--border-radius-md);
+      color: white;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-login:hover { background: #009933; transform: translateY(-1px); }
+    .btn-login:active { transform: scale(0.98); }
+    .msg { margin-top: 12px; font-size: 14px; text-align: center; min-height: 20px; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1.25rem 0 1rem;
+    }
+    .divider-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+    .divider-text { font-size: 12px; color: var(--color-text-tertiary); }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 12 Q18 4 32 12" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <path d="M4 24 Q18 32 32 24" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            <path d="M18 8 L18 28" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="logo-title">CONALEP</span>
+        <span class="logo-sub">Veracruz</span>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Usuario</label>
+        <input class="field-input" type="text" id="usr" placeholder="Ingresa tu usuario" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Contraseña</label>
+        <input class="field-input" type="password" id="pwd" placeholder="••••••••" />
+      </div>
+
+      <button class="btn-login" onclick="doLogin()">Entrar</button>
+      <div class="msg" id="msg"></div>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">ACCESO INSTITUCIONAL</span>
+        <div class="divider-line"></div>
+      </div>
+      <p style="font-size: 12px; color: var(--color-text-tertiary); text-align: center; margin: 0;">Sistema de gestión escolar CONALEP Veracruz</p>
+    </div>
+  </div>
+
+  <script>
+function doLogin() {
+  var user = document.getElementById('usr').value;
+  var pass = document.getElementById('pwd').value;
+  var msg  = document.getElementById('msg');
+
+  if (user === 'alumno' && pass === '165') {
+    msg.style.color = "green";
+    msg.textContent = "Acceso correcto...";
+    
+    setTimeout(function() {
+      window.location.href = "principal.html";
+    }, 1000);
+
+  } else {
+    msg.style.color = "red";
+    msg.textContent = "Usuario o contraseña incorrectos";
+  }
+}
+</script>
+</body>
+</html>
