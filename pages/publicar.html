@@ -9,12 +9,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
 <style>
-
-
-
-
-
-
 #intro-screen {
   position: fixed;
   inset: 0;
@@ -90,20 +84,6 @@
 @keyframes dibujar { to { stroke-dashoffset: 0; } }
 @keyframes aparecer { to { opacity: 1; transform: translateY(0); } }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 body{
 font-family:Arial;
 background:#f0f2f5;
@@ -151,21 +131,12 @@ margin-right:10px;
 background:#006341;
 color:white;
 }
-
 </style>
 </head>
 
 <body>
 
-
-
-
-
-
-
-
-
-    <div id="intro-screen">
+<div id="intro-screen">
   <div class="intro-contenido">
     <div class="intro-logo">
       <svg viewBox="-110 -90 540 380" xmlns="http://www.w3.org/2000/svg">
@@ -187,47 +158,28 @@ color:white;
   </div>
 </div>
 
-
-
-
-
-
-
-
-
 <div class="composer">
-
-<h2>Crear publicación</h2>
-
-<textarea id="post-text" placeholder="¿Qué quieres compartir?"></textarea>
-
-<br>
-
-<input type="file" id="file-input">
-
-<div class="tipo">
-
-<b>Tipo de publicación:</b><br>
-
-<button id="btn-publicacion">Publicación</button>
-
-<button id="btn-direccion">Dirección</button>
-
-<button id="btn-promocion">Promoción</button>
-
+  <h2>Crear publicación</h2>
+  <textarea id="post-text" placeholder="¿Qué quieres compartir?"></textarea>
+  <br>
+  <input type="file" id="file-input">
+  <div class="tipo">
+    <b>Tipo de publicación:</b><br>
+    <button id="btn-publicacion">Publicación</button>
+    <button id="btn-direccion">Dirección</button>
+    <button id="btn-promocion">Promoción</button>
+  </div>
+  <br>
+  <button onclick="publicarPost()">Publicar</button>
 </div>
 
-<br>
-
-<button onclick="publicarPost()">Publicar</button>
-
-</div>
+<!-- ===== FILTRO DE MALAS PALABRAS (archivo externo) ===== -->
+<script src="../assets/js/script.js"></script>
 
 <script>
-
 // CONFIG FIREBASE
 const firebaseConfig = {
-apiKey: "TU_API_KEY",
+apiKey: "TU_API_KEY",  // ⚠️ USA TU API KEY REAL
 authDomain: "undertale-web.firebaseapp.com",
 projectId: "undertale-web",
 storageBucket: "undertale-web.firebasestorage.app"
@@ -243,128 +195,94 @@ let tipo = "publicacion";
 let postLocation = null;
 let isPromotion = false;
 
-
 // BOTONES
 const btnPublicacion = document.getElementById("btn-publicacion");
 const btnDireccion = document.getElementById("btn-direccion");
 const btnPromocion = document.getElementById("btn-promocion");
 
-
 // ACTIVAR PUBLICACION POR DEFECTO
 btnPublicacion.classList.add("activo");
 
-
 // FUNCION PARA CAMBIAR TIPO
 function cambiarTipo(t){
+  tipo = t;
+  postLocation = null;
+  isPromotion = false;
 
-tipo = t;
-postLocation = null;
-isPromotion = false;
+  document.querySelectorAll(".tipo button").forEach(b => b.classList.remove("activo"));
 
-document.querySelectorAll(".tipo button")
-.forEach(b => b.classList.remove("activo"));
-
-if(t==="publicacion"){
-btnPublicacion.classList.add("activo");
+  if(t==="publicacion"){
+    btnPublicacion.classList.add("activo");
+  }
+  if(t==="direccion"){
+    postLocation="CONALEP 165 Tuxpan";
+    btnDireccion.classList.add("activo");
+  }
+  if(t==="promocion"){
+    isPromotion=true;
+    btnPromocion.classList.add("activo");
+  }
 }
-
-if(t==="direccion"){
-postLocation="CONALEP 165 Tuxpan";
-btnDireccion.classList.add("activo");
-}
-
-if(t==="promocion"){
-isPromotion=true;
-btnPromocion.classList.add("activo");
-}
-
-}
-
 
 // EVENTOS
 btnPublicacion.onclick = () => cambiarTipo("publicacion");
 btnDireccion.onclick = () => cambiarTipo("direccion");
 btnPromocion.onclick = () => cambiarTipo("promocion");
 
-
-
 // PUBLICAR
 async function publicarPost(){
+  const text = document.getElementById("post-text").value.trim();
+  const file = document.getElementById("file-input").files[0];
 
-const text = document.getElementById("post-text").value.trim();
-const file = document.getElementById("file-input").files[0];
+  // ⛔ BLOQUEO DE INSULTOS ⛔
+  if (tieneMalasPalabras(text)) {
+    alert("Tu publicación contiene palabras no permitidas. Corrígela.");
+    return;
+  }
 
-let fileUrl = null;
-let fileMeta = null;
+  let fileUrl = null;
+  let fileMeta = null;
 
-try{
+  try{
+    if(file){
+      const storageRef = storage.ref().child("posts/" + Date.now() + "_" + file.name);
+      await storageRef.put(file);
+      fileUrl = await storageRef.getDownloadURL();
+      fileMeta = {
+        name:file.name,
+        type:file.type,
+        size:file.size
+      };
+    }
 
-if(file){
+    await db.collection("posts").add({
+      texto: text,
+      fileUrl: fileUrl,
+      fileMeta: fileMeta,
+      isPromotion: isPromotion,
+      location: postLocation,
+      tipo: tipo,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-const storageRef = storage.ref().child("posts/" + Date.now() + "_" + file.name);
-
-await storageRef.put(file);
-
-fileUrl = await storageRef.getDownloadURL();
-
-fileMeta = {
-name:file.name,
-type:file.type,
-size:file.size
-};
-
+    alert("Publicación creada correctamente");
+    document.getElementById("post-text").value="";
+    document.getElementById("file-input").value="";
+    cambiarTipo("publicacion");
+  }catch(error){
+    console.error(error);
+    alert("Error al publicar");
+  }
 }
-
-await db.collection("posts").add({
-
-texto: text,
-fileUrl: fileUrl,
-fileMeta: fileMeta,
-isPromotion: isPromotion,
-location: postLocation,
-tipo: tipo,
-createdAt: firebase.firestore.FieldValue.serverTimestamp()
-
-});
-
-alert("Publicación creada correctamente");
-
-document.getElementById("post-text").value="";
-document.getElementById("file-input").value="";
-
-cambiarTipo("publicacion");
-
-}catch(error){
-
-console.error(error);
-alert("Error al publicar");
-
-}
-
-}
-
 </script>
 
-
-
-
-
-
-
-
 <script>
-  // La animación termina a los ~3.5s, luego fade out de 0.8s
   setTimeout(function () {
     var intro = document.getElementById('intro-screen');
     intro.classList.add('ocultar');
     setTimeout(function () { intro.remove(); }, 800);
   }, 3500);
 </script>
-
-
-  <script src="../assets/js/script.js"></script>
-
-
 
 </body>
 </html>
