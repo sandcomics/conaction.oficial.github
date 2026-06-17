@@ -5,55 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bitácora de Laboratorio</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:Verdana,Geneva,Tahoma,sans-serif;}
-        body{background:#e9ecef;padding:20px;}
-        .container{max-width:1100px;margin:auto;display:flex;border-radius:14px;overflow:hidden;border:0.5px solid #ccc;}
-        .left{width:32%;background:#3e5239;color:#b0c7b8;padding:32px;display:flex;flex-direction:column;justify-content:flex-start;gap:14px;}
-        .left h2{color:#d4e8d4;font-size:16px;font-weight:500;margin-bottom:4px;}
-        .left p{font-size:12.5px;line-height:1.6;}
-        .left .tag{font-size:11px;background:#486345;color:#d4e8d4;padding:4px 12px;border-radius:20px;display:inline-block;margin-top:6px;}
-        .right{width:68%;background:#fff;padding:24px;}
-        .title{text-align:center;margin-bottom:18px;}
-        .title h1{color:#486345;font-size:17px;font-weight:500;margin-bottom:6px;}
-        .title span{background:#3e5239;color:white;padding:4px 16px;border-radius:20px;font-size:11px;}
-        .info{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
-        .field{background:#f8f9fa;padding:10px;border-radius:6px;border-left:4px solid #486345;}
-        .field label{font-size:11px;font-weight:500;color:#3e5239;display:block;margin-bottom:4px;}
-        .field input,.field select{width:100%;padding:6px;border-radius:4px;border:0.5px solid #ced4da;background:#fff;color:#212529;font-size:12.5px;}
-        .table-wrap{overflow:auto;border-radius:8px;border:1.5px solid #3e5239;}
-        table{width:100%;border-collapse:collapse;min-width:680px;}
-        th{background:#3e5239;color:white;padding:9px 7px;font-size:11.5px;font-weight:500;}
-        td{padding:5px;border-bottom:0.5px solid #7b8b6a;text-align:center;background:#fff;}
+        :root{
+            --forest:#3e5239;
+            --forest-light:#486345;
+            --mint:#d4e8d4;
+            --mint-soft:#eef5ec;
+            --paper:#e9ecef;
+            --card:#ffffff;
+            --ink:#212529;
+            --ink-soft:#5b6661;
+            --border:#ced4da;
+
+            --status-good-bg:#e3f5ec;   --status-good-text:#0b5d3b;
+            --status-regular-bg:#fff3de; --status-regular-text:#92600a;
+            --status-bad-bg:#fde7e9;    --status-bad-text:#a4262c;
+
+            --shadow:0 10px 28px rgba(20,40,25,0.12);
+        }
+
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Verdana,Tahoma,sans-serif;}
+
+        body{background:var(--paper);padding:24px;color:var(--ink);}
+
+        .container{
+            max-width:1140px;
+            margin:auto;
+            display:flex;
+            border-radius:16px;
+            overflow:hidden;
+            box-shadow:var(--shadow);
+            background:var(--card);
+        }
+
+        /* ===== Panel izquierdo ===== */
+        .left{
+            width:30%;
+            background:linear-gradient(165deg,var(--forest),#2c3b29);
+            color:var(--mint);
+            padding:30px 26px;
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+        }
+
+        .left-heading{ display:flex; align-items:flex-start; gap:10px; }
+        .left-heading svg{ width:26px; height:26px; flex-shrink:0; color:var(--mint); margin-top:2px; }
+
+        .left h2{color:#eef7ee;font-size:17px;font-weight:600;margin-bottom:6px;}
+
+        .left p{font-size:12.5px;line-height:1.65;color:#cfe2cf;}
+
+        .tag{
+            font-size:11px;background:var(--forest-light);color:var(--mint);
+            padding:4px 12px;border-radius:20px;display:inline-block;margin-top:4px;
+            font-weight:600;letter-spacing:0.2px;
+        }
+
+        .left-section-title{
+            font-size:12px;margin-top:6px;color:#eef7ee;font-weight:600;
+            display:flex;align-items:center;gap:6px;
+        }
+
+        .left ul{font-size:12px;line-height:1.9;padding-left:0;margin-top:2px;list-style:none;}
+        .left ul li{ display:flex; align-items:flex-start; gap:8px; margin-bottom:4px; }
+        .left ul li svg{ width:13px; height:13px; flex-shrink:0; margin-top:3px; color:var(--mint); }
+
+        .left .nota{
+            font-size:11.5px;color:#a9c4ab;margin-top:auto;padding-top:14px;
+            border-top:1px solid rgba(255,255,255,0.12);
+        }
+
+        /* ===== Panel derecho ===== */
+        .right{width:70%;background:var(--card);padding:28px 30px;}
+
+        .title{text-align:center;margin-bottom:20px;}
+        .title h1{color:var(--forest-light);font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:0.3px;}
+        .title span{background:var(--forest);color:white;padding:5px 16px;border-radius:20px;font-size:11px;font-weight:600;}
+
+        .info{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+
+        .field{background:#f8f9fa;padding:11px 12px;border-radius:8px;border-left:4px solid var(--forest-light);}
+        .field label{font-size:10.5px;font-weight:700;color:var(--forest);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px;}
+        .field input,.field select{
+            width:100%;padding:7px 8px;border-radius:5px;border:1px solid var(--border);
+            background:#fff;color:var(--ink);font-size:12.5px;transition:border-color .15s ease, box-shadow .15s ease;
+        }
+        .field input:focus,.field select:focus{
+            outline:none;border-color:var(--forest-light);box-shadow:0 0 0 3px rgba(72,99,69,0.15);
+        }
+
+        /* ===== Tabla ===== */
+        .table-wrap{overflow:auto;border-radius:10px;border:1.5px solid var(--forest);max-height:420px;}
+        table{width:100%;border-collapse:collapse;min-width:620px;}
+
+        thead th{
+            background:var(--forest);color:white;padding:10px 7px;font-size:11.5px;
+            font-weight:600;position:sticky;top:0;z-index:1;
+        }
+
+        td{padding:6px;border-bottom:1px solid #d8e0d4;text-align:center;background:#fff;font-size:12.5px;}
         tbody tr:nth-child(even) td{background:#f8f9fa;}
-        .time{background:#486345 !important;color:white;font-weight:500;font-size:12px;white-space:nowrap;}
-        td input{width:100%;padding:4px 5px;border:0.5px solid #ced4da;border-radius:3px;background:#fff;color:#212529;font-size:12px;text-align:center;}
-        td input.auto{color:#486345;font-weight:500;}
-        td select{width:100%;padding:3px;font-size:11px;border:0.5px solid #ced4da;border-radius:3px;}
-        .buttons{margin-top:14px;display:flex;justify-content:flex-end;gap:10px;}
-        .buttons button{padding:9px 20px;border:0.5px solid #ced4da;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;color:#212529;}
-        .buttons .save{background:#3e5239;color:white;border-color:#3e5239;}
-        .fila-seleccionada td{background:#d4e8d4 !important;}
-        .fila-seleccionada .time{background:#486345 !important;}
+        tbody tr:hover td{background:var(--mint-soft);}
+
+        .time{background:var(--forest-light) !important;color:white;font-weight:600;font-size:12px;white-space:nowrap;}
+
+        td input{width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:4px;background:#fff;color:var(--ink);font-size:12px;text-align:center;}
+        td input:focus{ outline:none;border-color:var(--forest-light);box-shadow:0 0 0 2px rgba(72,99,69,0.15); }
+        td input.auto{color:var(--forest-light);font-weight:600;}
+
+        td select{width:100%;padding:4px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:#fff;color:var(--ink);font-weight:500;cursor:pointer;}
+
+        td select.estado-bueno{ background:var(--status-good-bg); color:var(--status-good-text); border-color:var(--status-good-text); font-weight:700; }
+        td select.estado-regular{ background:var(--status-regular-bg); color:var(--status-regular-text); border-color:var(--status-regular-text); font-weight:700; }
+        td select.estado-danado{ background:var(--status-bad-bg); color:var(--status-bad-text); border-color:var(--status-bad-text); font-weight:700; }
+
+        .fila-seleccionada td{background:var(--mint) !important;}
+        .fila-seleccionada .time{background:var(--forest-light) !important;}
+
+        /* ===== Botones ===== */
+        .buttons{margin-top:16px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+        .buttons button{
+            padding:9px 18px;border:1px solid var(--border);border-radius:20px;font-size:13px;
+            cursor:pointer;background:#fff;color:var(--ink);display:flex;align-items:center;gap:7px;
+            font-weight:600;transition:background .15s ease, box-shadow .15s ease;
+        }
+        .buttons button:hover{ background:#f1f3f1; }
+        .buttons button svg{width:15px;height:15px;}
+        .buttons .save{background:var(--forest);color:white;border-color:var(--forest);}
+        .buttons .save:hover{background:var(--forest-light);}
+
+        /* ===== Responsivo ===== */
+        @media (max-width:880px){
+            .container{flex-direction:column;border-radius:14px;}
+            .left,.right{width:100%;}
+            .left{padding:24px;}
+            .info{grid-template-columns:1fr;}
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="left">
         <div>
-            <h2>Bitácora de Laboratorio</h2>
+            <div class="left-heading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.5L4 19a2 2 0 0 0 1.8 3h12.4a2 2 0 0 0 1.8-3l-5-10.5V2"/><line x1="7" y1="2" x2="17" y2="2"/></svg>
+                <h2>Bitácora de Laboratorio</h2>
+            </div>
             <span class="tag">Control de equipos y materiales</span>
         </div>
         <p>Este registro permite llevar un control detallado del uso de los espacios, equipos, reactivos y materiales del laboratorio durante cada práctica escolar.</p>
-        <p style="font-size:12.5px;margin-top:4px;color:#d4e8d4;font-weight:500;">¿Por qué esta tabla?</p>
-        <p>La tabla documenta cada sesión con los datos esenciales: práctica realizada, docente responsable, grupo, número de alumnos, equipos utilizados y condición del material. Esto permite:</p>
-        <ul style="font-size:12px;line-height:1.9;padding-left:14px;margin-top:4px;">
-            <li>Detectar daños o pérdidas de equipo</li>
-            <li>Rastrear responsabilidades por sesión</li>
-            <li>Controlar reactivos y materiales</li>
-            <li>Cumplir normativas de seguridad escolar</li>
-            <li>Generar reportes para administración</li>
+        <div class="left-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>
+            ¿Por qué esta tabla?
+        </div>
+        <p>La tabla documenta cada sesión con los datos esenciales: práctica realizada, docente responsable, grupo, número de alumnos y condición del material. Esto permite:</p>
+        <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Detectar daños o pérdidas de equipo</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Rastrear responsabilidades por sesión</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Controlar reactivos y materiales</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Cumplir normativas de seguridad escolar</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Generar reportes para administración</li>
         </ul>
-        <p style="font-size:12px;color:#b0c7b8;margin-top:6px;">Cada docente debe firmar al recibir y entregar el laboratorio.</p>
+        <p class="nota">Cada docente debe registrar el estado del material al recibir y entregar el laboratorio.</p>
     </div>
     <div class="right">
         <div class="title">
@@ -62,7 +175,7 @@
         </div>
         <div class="info">
             <div class="field">
-                <label> SELECCIONAR HORA (fila a actualizar)</label>
+                <label>Seleccionar hora (fila a actualizar)</label>
                 <select id="horaSelector">
                     <option value="0">7:00 - 8:00</option>
                     <option value="1">8:00 - 9:00</option>
@@ -90,17 +203,24 @@
                         <th>Alumnos</th>
                         <th>Estado inicial</th>
                         <th>Estado final</th>
-                        <th>Firma recibe</th>
-                        <th>Firma entrega</th>
                     </tr>
                 </thead>
                 <tbody id="cuerpo"></tbody>
             </table>
         </div>
         <div class="buttons">
-            <button onclick="limpiar()">Limpiar</button>
-            <button onclick="descargarExcel()">Descargar Excel</button>
-            <button class="save" onclick="guardar()">Guardar Registro</button>
+            <button onclick="limpiar()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                Limpiar
+            </button>
+            <button onclick="descargarExcel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Descargar Excel
+            </button>
+            <button class="save" onclick="guardar()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Guardar Registro
+            </button>
         </div>
     </div>
 </div>
@@ -126,7 +246,14 @@ const db = getFirestore(app);
 // =============================
 const horarios = ["7:00 - 8:00","8:00 - 9:00","9:00 - 10:00","10:00 - 11:00","11:00 - 12:00","12:00 - 13:00","13:00 - 14:00"];
 let filaSeleccionadaIndex = 0;
- 
+
+window.colorearEstado = function(select){
+    select.classList.remove("estado-bueno","estado-regular","estado-danado");
+    if(select.value === "Bueno") select.classList.add("estado-bueno");
+    else if(select.value === "Regular") select.classList.add("estado-regular");
+    else if(select.value === "Dañado") select.classList.add("estado-danado");
+};
+
 function crearTabla() {
     const tbody = document.getElementById("cuerpo");
     tbody.innerHTML = "";
@@ -139,13 +266,12 @@ function crearTabla() {
             <td><input class="auto" data-campo="docente" type="text"></td>
             <td><input class="auto" data-campo="grupo" type="text"></td>
             <td><input class="auto" data-campo="alumnos" type="text"></td>
-            <td><select><option>Bueno</option><option>Regular</option><option>Dañado</option></select></td>
-            <td><select><option>Bueno</option><option>Regular</option><option>Dañado</option></select></td>
-            <td><input type="text" placeholder="Firma"></td>
-            <td><input type="text" placeholder="Firma"></td>
+            <td><select onchange="colorearEstado(this)"><option>Bueno</option><option>Regular</option><option>Dañado</option></select></td>
+            <td><select onchange="colorearEstado(this)"><option>Bueno</option><option>Regular</option><option>Dañado</option></select></td>
         `;
         tbody.appendChild(tr);
     });
+    tbody.querySelectorAll("select").forEach(s => colorearEstado(s));
     resaltarFilaSeleccionada();
 }
  
@@ -183,6 +309,7 @@ window.limpiar = function() {
     ["docente","practica","grupo","alumnos"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("fecha").valueAsDate = new Date();
     document.querySelectorAll("#cuerpo input").forEach(inp => inp.value = "");
+    document.querySelectorAll("#cuerpo select").forEach(s => { s.value = "Bueno"; colorearEstado(s); });
 };
  
 // =============================
@@ -220,7 +347,7 @@ window.descargarExcel = async function() {
     const querySnapshot = await getDocs(collection(db, "laboratorio"));
  
     const datos = [
-        ["Horario","Práctica","Docente","Grupo","Alumnos","Estado inicial","Estado final","Firma recibe","Firma entrega","Fecha"]
+        ["Horario","Práctica","Docente","Grupo","Alumnos","Estado inicial","Estado final","Fecha"]
     ];
  
     querySnapshot.forEach(doc => {
