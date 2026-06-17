@@ -9,16 +9,34 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
 
+/* ===== Tokens (suite ofimática, paleta verde institucional) ===== */
+:root{
+  --green-900:#07402B;
+  --green-800:#0B5D3B;
+  --green-600:#128A57;
+  --green-500:#1AA968;
+  --teal-green:#0E7C66;
+  --slate-green:#3B6E5C;
 
+  --bg:#F3F2F1;
+  --surface:#FFFFFF;
+  --border:#E1DFDD;
+  --border-strong:#D2D0CE;
+  --text:#201F1E;
+  --text-secondary:#605E5C;
+  --text-tertiary:#8A8886;
 
+  --badge-promo-bg:#FFF3DE;   --badge-promo-text:#92600A;
+  --badge-direccion-bg:#E3F5EC; --badge-direccion-text:#0B5D3B;
+  --badge-archivo-bg:#E3F0EC; --badge-archivo-text:#0E7C66;
 
+  --shadow-1:0 1.6px 3.6px rgba(0,0,0,0.09), 0 0.3px 0.9px rgba(0,0,0,0.08);
+  --radius:4px;
+}
 
-
-
+/* ===== Intro screen (logo institucional) ===== */
 #intro-screen {
   position: fixed;
   inset: 0;
@@ -29,227 +47,265 @@
   z-index: 9999;
   transition: opacity 0.8s ease;
 }
-#intro-screen.ocultar {
-  opacity: 0;
-  pointer-events: none;
+#intro-screen.ocultar { opacity: 0; pointer-events: none; }
+.intro-logo { width: 90vw; max-width: 700px; }
+.intro-logo svg { width: 100%; height: auto; }
+.linea-sombra{
+  fill:none; stroke:rgba(0,140,80,0.12); stroke-width:38;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1300; stroke-dashoffset:1300;
+  animation:dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
 }
-.intro-logo {
-  width: 90vw;
-  max-width: 700px;
+.linea-principal{
+  fill:none; stroke:url(#grad-conalep); stroke-width:26;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1300; stroke-dashoffset:1300;
+  animation:dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
 }
-.intro-logo svg {
-  width: 100%;
-  height: auto;
+.linea-top{ animation-delay:0.1s; }
+.linea-bottom{ animation-delay:0.45s; }
+.intro-titulo{
+  font-family:'Segoe UI','Arial Black',sans-serif;
+  font-size:clamp(28px,6vw,56px); font-weight:900; letter-spacing:10px;
+  color:#006f47; text-transform:uppercase; opacity:0;
+  transform:translateY(22px); animation:aparecer 0.9s ease forwards 2.3s;
 }
-.linea-sombra {
-  fill: none;
-  stroke: rgba(0,140,80,0.12);
-  stroke-width: 38;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1300;
-  stroke-dashoffset: 1300;
-  animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+.intro-subtitulo{
+  font-family:'Segoe UI',sans-serif;
+  font-size:clamp(11px,2vw,17px); font-weight:600; letter-spacing:6px;
+  color:#009960; text-transform:uppercase; opacity:0;
+  transform:translateY(14px); animation:aparecer 0.9s ease forwards 2.6s;
 }
-.linea-principal {
-  fill: none;
-  stroke: url(#grad-conalep);
-  stroke-width: 26;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1300;
-  stroke-dashoffset: 1300;
-  animation: dibujar 2s cubic-bezier(0.77,0,0.18,1) forwards;
+.intro-contenido{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+@keyframes dibujar{ to{ stroke-dashoffset:0; } }
+@keyframes aparecer{ to{ opacity:1; transform:translateY(0); } }
+@media (prefers-reduced-motion: reduce){
+  .linea-sombra,.linea-principal{ animation:none !important; stroke-dashoffset:0 !important; }
+  .intro-titulo,.intro-subtitulo{ animation:none !important; opacity:1 !important; transform:none !important; }
 }
-.linea-top    { animation-delay: 0.1s; }
-.linea-bottom { animation-delay: 0.45s; }
-.intro-titulo {
-  font-family: 'Segoe UI', 'Arial Black', sans-serif;
-  font-size: clamp(28px, 6vw, 56px);
-  font-weight: 900;
-  letter-spacing: 10px;
-  color: #006f47;
-  text-transform: uppercase;
-  opacity: 0;
-  transform: translateY(22px);
-  animation: aparecer 0.9s ease forwards 2.3s;
-}
-.intro-subtitulo {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: clamp(11px, 2vw, 17px);
-  font-weight: 600;
-  letter-spacing: 6px;
-  color: #009960;
-  text-transform: uppercase;
-  opacity: 0;
-  transform: translateY(14px);
-  animation: aparecer 0.9s ease forwards 2.6s;
-}
-.intro-contenido {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-}
-@keyframes dibujar { to { stroke-dashoffset: 0; } }
-@keyframes aparecer { to { opacity: 1; transform: translateY(0); } }
 
-
-
-
-
-
-
-
-
-
+/* ===== Base ===== */
 *{box-sizing:border-box}
 
 body{
-margin:0;
-font-family:'Roboto',sans-serif;
-background:#f0f2f5;
-color:#222;
-overflow-x:hidden;
+  margin:0;
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  font-size:14px;
 }
 
-.topbar{
-background:#ffffff;
-border-bottom:1px solid #e6e6e6;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:8px 18px;
-position:sticky;
-top:0;
-z-index:60;
-box-shadow:0 1px 3px rgba(0,0,0,0.04);
+a{ color:var(--green-800); }
+
+button:focus-visible, a:focus-visible{
+  outline:2px solid var(--green-600);
+  outline-offset:1px;
 }
 
-.brand{
-display:flex;
-align-items:center;
-gap:12px;
+/* ===== Barra superior tipo "suite" ===== */
+.suite-bar{
+  background:var(--green-900);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:7px 20px;
+  gap:12px;
 }
+
+.brand{ display:flex; align-items:center; gap:10px; }
 
 .brand img{
-height:48px;
-border-radius:6px;
+  height:32px; width:32px; object-fit:cover; border-radius:2px;
 }
 
-.tabs{
-display:flex;
-gap:8px;
-align-items:center;
+.brand-name{ font-weight:600; font-size:14px; color:#fff; line-height:1.1; }
+.brand-sub{ font-size:11px; color:#C9E6D6; line-height:1.1; }
+
+.waffle{
+  display:grid; grid-template-columns:repeat(3,4px); grid-gap:3px; opacity:0.85;
+}
+.waffle span{ width:4px; height:4px; background:#C9E6D6; border-radius:1px; }
+
+/* ===== Cinta de pestañas (ribbon) ===== */
+.ribbon{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  padding:0 16px;
+  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  z-index:50;
 }
 
-.tab{
-padding:10px 14px;
-border-radius:8px;
-background:transparent;
-border:none;
-cursor:pointer;
-font-weight:600;
-color:#333;
+.ribbon-tab{
+  display:flex; align-items:center; gap:7px;
+  padding:11px 16px;
+  background:transparent;
+  border:none;
+  border-bottom:3px solid transparent;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--text-secondary);
+  margin-bottom:-1px;
+  transition:background 0.12s ease,color 0.12s ease,border-color 0.12s ease;
 }
 
-.tab.active{
-background:#006341;
-color:white;
+.ribbon-tab:hover{ background:var(--bg); color:var(--text); }
+
+.ribbon-tab.active{
+  color:var(--green-800);
+  border-bottom-color:var(--green-700, var(--green-800));
 }
 
+.ribbon-icon{ width:16px; height:16px; flex-shrink:0; }
+
+/* ===== Fila de accesos rápidos (tipo lanzador de apps) ===== */
+.quicklinks{
+  background:#FAFAF9;
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+}
+
+.tile{
+  flex:0 0 auto;
+  width:120px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  cursor:pointer;
+  font-family:inherit;
+  text-align:left;
+  transition:box-shadow 0.12s ease,border-color 0.12s ease;
+}
+
+.tile:hover{ box-shadow:var(--shadow-1); border-color:var(--border-strong); }
+
+.tile-icon{
+  width:28px; height:28px; border-radius:4px;
+  display:flex; align-items:center; justify-content:center; color:#fff;
+}
+.tile-icon svg{ width:16px; height:16px; }
+
+.tile-label{ font-size:12.5px; font-weight:600; color:var(--text); line-height:1.25; }
+
+/* ===== Layout principal ===== */
 .container{
-max-width:1200px;
-margin:20px auto;
-display:grid;
-grid-template-columns:320px 1fr 320px;
-gap:20px;
-padding:0 12px;
+  max-width:1200px;
+  margin:18px auto;
+  display:grid;
+  grid-template-columns:270px 1fr 270px;
+  gap:16px;
+  padding:0 16px;
 }
 
+@media (max-width:1024px){
+  .container{ grid-template-columns:1fr; }
+  .left-column{ order:2 }
+  main{ order:1 }
+  .right-column{ order:3 }
+}
+
+/* ===== Tarjetas tipo "web part" ===== */
 .card{
-background:white;
-border-radius:12px;
-padding:16px;
-box-shadow:0 6px 18px rgba(0,0,0,0.06)
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-1);
+  overflow:hidden;
 }
 
-.left-column .card img{
-max-width:100%;
-border-radius:8px
+.card-header{
+  display:flex; align-items:center; gap:8px;
+  padding:11px 14px;
+  border-bottom:1px solid var(--border);
+  font-weight:600; font-size:13px; color:var(--text);
+}
+.card-header svg{ width:16px; height:16px; color:var(--green-800); flex-shrink:0; }
+
+.card-body{ padding:14px; }
+.card-body p{ margin:0 0 8px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+.card-body img{ max-width:100%; border-radius:3px; display:block; border:1px solid var(--border); }
+
+.gallery-grid{ display:flex; gap:6px; flex-wrap:wrap; }
+.gallery-grid img{
+  width:84px; height:66px; object-fit:cover; border-radius:3px;
+  border:1px solid var(--border); cursor:pointer;
+  transition:border-color 0.12s ease,box-shadow 0.12s ease;
+}
+.gallery-grid img:hover{ border-color:var(--green-600); box-shadow:var(--shadow-1); }
+
+.right-column ul{
+  margin:0; padding-left:16px; color:var(--text-secondary); font-size:13px; line-height:1.7;
 }
 
-.post{
-background:white;
-border-radius:12px;
-padding:14px;
-margin-bottom:12px;
-box-shadow:0 6px 18px rgba(0,0,0,0.05)
-}
+/* ===== Encabezado de página ===== */
+.breadcrumb{ font-size:12px; color:var(--text-tertiary); margin-bottom:4px; }
+.breadcrumb a{ color:var(--text-tertiary); text-decoration:none; }
+.breadcrumb a:hover{ text-decoration:underline; }
+
+.page-header{ margin-bottom:14px; }
+
+h1.page-title{ margin:0 0 2px; font-size:22px; font-weight:600; color:var(--green-900); }
+.page-subtitle{ font-size:13px; color:var(--text-secondary); }
+
+/* ===== Feed ===== */
+.feed-list{ padding:4px 14px 6px; }
+
+.post{ border-top:1px solid var(--border); padding:14px 0; }
+.post:first-child{ border-top:none; }
 
 .post .meta{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:8px
+  display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px;
 }
-
-.post .meta .left{
-display:flex;
-gap:10px;
-align-items:center
-}
+.post .meta .left{ display:flex; gap:10px; align-items:center; }
 
 .avatar{
-width:40px;
-height:40px;
-border-radius:50%;
-background:#ddd
+  width:34px; height:34px; border-radius:50%;
+  background:var(--green-800); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:600; font-size:12.5px; flex-shrink:0;
 }
+
+.post-author{ font-weight:600; font-size:13.5px; color:var(--text); }
+.post-date{ font-size:11.5px; color:var(--text-tertiary); margin-top:1px; }
+
+.badge{
+  padding:3px 9px; border-radius:3px; font-size:11px; font-weight:700;
+  letter-spacing:0.2px; text-transform:uppercase; white-space:nowrap;
+}
+.badge-promo{ background:var(--badge-promo-bg); color:var(--badge-promo-text); }
+.badge-direccion{ background:var(--badge-direccion-bg); color:var(--badge-direccion-text); }
+.badge-archivo{ background:var(--badge-archivo-bg); color:var(--badge-archivo-text); }
 
 .post .body{
-font-size:15px;
-margin-bottom:10px;
-white-space:pre-wrap
+  font-size:13.5px; line-height:1.55; margin-bottom:8px; white-space:pre-wrap; color:var(--text);
 }
 
-.post .actions{
-display:flex;
-gap:12px;
-margin-top:10px;
-color:#555;
-font-weight:600
+.post-media img, .post-media video{
+  width:100%; border-radius:3px; display:block; border:1px solid var(--border);
 }
+.post-media a{ display:inline-flex; align-items:center; gap:6px; font-weight:600; font-size:13px; }
 
-.post-action{
-display:flex;
-align-items:center;
-gap:4px;
-cursor:pointer
-}
-
-h1.page-title{
-text-align:center;
-color:#006341;
-font-family:'Poppins',sans-serif
-}
-
-.empty-message{
-text-align:center;
-padding:18px;
-color:#666
-}
+.empty-message{ text-align:center; padding:30px 16px; color:var(--text-tertiary); font-size:13px; }
 
 </style>
 </head>
 
 <body>
 
-
-
-
-
-    <div id="intro-screen">
+<div id="intro-screen">
   <div class="intro-contenido">
     <div class="intro-logo">
       <svg viewBox="-110 -90 540 380" xmlns="http://www.w3.org/2000/svg">
@@ -271,125 +327,137 @@ color:#666
   </div>
 </div>
 
-
-
-
-
-
-
-<div class="topbar">
-
-<div class="brand">
-<img src="../assets/images/logoq.jpeg">
-<div>
-<div style="font-weight:700">CONALEP 165 Tuxpan</div>
-<div style="font-size:12px;color:#666">Red interna de la comunidad</div>
-</div>
+<div class="suite-bar">
+  <div class="brand">
+    <img src="../assets/images/logoq.jpeg" alt="CONALEP 165 Tuxpan">
+    <div>
+      <div class="brand-name">CONALEP 165 Tuxpan</div>
+      <div class="brand-sub">Red interna de la comunidad</div>
+    </div>
+  </div>
+  <div class="waffle"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 </div>
 
-<div class="tabs">
-
-<button class="tab active" data-tab="inicio" onclick="switchTab('inicio')">Inicio</button>
-
-<button class="tab" data-tab="direccion" onclick="switchTab('direccion')">Dirección</button>
-
-<button class="tab" onclick="window.location.href='archivos.html'">Archivos</button>
-
-
-
-<button class="tab" onclick="window.location.href='bot1.html'">Bot</button>
-
-<button class="tab" data-tab="promocion" onclick="switchTab('promocion')">Promoción</button>
-
-</div>
+<div class="ribbon">
+  <button class="ribbon-tab active" data-tab="inicio" onclick="switchTab('inicio')">
+    <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Inicio</span>
+  </button>
+  <button class="ribbon-tab" data-tab="direccion" onclick="switchTab('direccion')">
+    <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    <span>Dirección</span>
+  </button>
+  <button class="ribbon-tab" data-tab="promocion" onclick="switchTab('promocion')">
+    <svg class="ribbon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l3.5 3.5a1 1 0 0 0 1.7-.7V7.2a1 1 0 0 0-1.7-.7L6 10H4a1 1 0 0 0-1 1z"/><path d="M16 8a4 4 0 0 1 0 8"/></svg>
+    <span>Promoción</span>
+  </button>
 </div>
 
+<div class="quicklinks">
+
+  <button class="tile" onclick="window.location.href='archivos.html'">
+    <span class="tile-icon" style="background:var(--teal-green)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+    </span>
+    <span class="tile-label">Archivos</span>
+  </button>
+
+  <button class="tile" onclick="window.location.href='publicar(alumnos).html'">
+    <span class="tile-icon" style="background:var(--green-600)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/></svg>
+    </span>
+    <span class="tile-label">Publicar (Alumnos)</span>
+  </button>
+
+  <button class="tile" onclick="window.location.href='bot1.html'">
+    <span class="tile-icon" style="background:var(--slate-green)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="1.4"/><circle cx="15" cy="14" r="1.4"/><line x1="12" y1="4" x2="12" y2="8"/><circle cx="12" cy="3" r="1"/></svg>
+    </span>
+    <span class="tile-label">Bot</span>
+  </button>
+
+</div>
 
 <div class="container">
 
+  <div class="left-column">
 
-<div class="left-column">
+    <div class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Ubicación</span>
+      </div>
+      <div class="card-body">
+        <p>Calle 2da general silva, Tuxpan, Veracruz</p>
+        <img src="../assets/images/ubi.png" alt="Mapa de ubicación CONALEP 165 Tuxpan">
+      </div>
+    </div>
 
-<div class="card">
+    <div class="card" style="margin-top:14px">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>Galería rápida</span>
+      </div>
+      <div class="card-body">
+        <div class="gallery-grid">
+          <img src="../assets/images/CAR.jpeg" alt="Galería 1">
+          <img src="../assets/images/F1.png" alt="Galería 2">
+          <img src="../assets/images/m1.jpeg" alt="Galería 3">
+        </div>
+      </div>
+    </div>
 
-<h3>Ubicación</h3>
+  </div>
 
-<p>Calle 2da general silva, Tuxpan, Veracruz</p>
+  <main class="center-column">
 
-<img src="../assets/images/ubi.png">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="#">Inicio</a> / Principal</div>
+      <h1 class="page-title">Principal</h1>
+      <div class="page-subtitle">Tablón de anuncios y publicaciones de la comunidad</div>
+    </div>
 
-</div>
+    <section class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Publicaciones recientes</span>
+      </div>
+      <div class="feed-list" id="posts-list">
+        <div class="empty-message">Cargando publicaciones...</div>
+      </div>
+    </section>
 
+  </main>
 
-<div class="card" style="margin-top:14px">
+  <aside class="right-column">
 
-<h3>Galería rápida</h3>
+    <div class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+        <span>Contacto</span>
+      </div>
+      <div class="card-body">
+        <p>Email: conalep165@conalep.edu.mx</p>
+        <p>Teléfono: 783 128 1051</p>
+      </div>
+    </div>
 
-<div style="display:flex;gap:8px;flex-wrap:wrap">
+    <div class="card" style="margin-top:14px">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 2-3 4"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>
+        <span>Preguntas frecuentes</span>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>¿Qué carreras ofrecen?</li>
+          <li>¿Horario de atención?</li>
+        </ul>
+      </div>
+    </div>
 
-<img src="../assets/images/CAR.jpeg" style="width:92px;height:72px;object-fit:cover;border-radius:6px">
-
-<img src="../assets/images/F1.png" style="width:92px;height:72px;object-fit:cover;border-radius:6px">
-
-<img src="../assets/images/m1.jpeg" style="width:92px;height:72px;object-fit:cover;border-radius:6px">
-
-</div>
-
-</div>
-
-</div>
-
-
-
-<main class="center-column">
-
-<h1 class="page-title">PRINCIPAL</h1>
-
-<section id="feed" class="card">
-
-<div id="posts-list">
-
-<div class="empty-message">Cargando publicaciones...</div>
-
-</div>
-
-</section>
-
-</main>
-
-
-
-<aside class="right-column">
-
-<div class="card">
-
-<h3>Contacto</h3>
-
-<p>Email: conalep165@conalep.edu.mx</p>
-
-<p>Teléfono: 783 128 1051</p>
-
-</div>
-
-
-<div class="card" style="margin-top:12px">
-
-<h3>Preguntas frecuentes</h3>
-
-<ul>
-
-<li>¿Qué carreras ofrecen?</li>
-
-<li>¿Horario de atención?</li>
-
-</ul>
-
-</div>
-
-</aside>
+  </aside>
 
 </div>
-
 
 
 <script>
@@ -410,143 +478,131 @@ const postsList=document.getElementById("posts-list");
 let postsCache=[];
 let currentTab="inicio";
 
+const emptyMessages={
+  inicio:"Aún no hay publicaciones. Vuelve más tarde para ver las novedades de la comunidad.",
+  direccion:"No hay avisos de Dirección por el momento.",
+  promocion:"No hay promociones activas en este momento."
+};
 
 function switchTab(tab){
-
-currentTab=tab;
-
-document.querySelectorAll(".tab").forEach(t=>{
-
-t.classList.toggle("active",t.dataset.tab===tab)
-
-});
-
-renderPosts()
-
+  currentTab=tab;
+  document.querySelectorAll(".ribbon-tab[data-tab]").forEach(t=>{
+    t.classList.toggle("active",t.dataset.tab===tab)
+  });
+  renderPosts()
 }
 
+function getInitials(name){
+  if(!name) return "U";
+  return name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
+}
+
+function formatDate(ts){
+  try{
+    const d=ts && ts.toDate ? ts.toDate() : null;
+    if(!d) return "";
+    const fecha=d.toLocaleDateString("es-MX",{day:"numeric",month:"short"});
+    const hora=d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
+    return `${fecha} · ${hora}`;
+  }catch(e){
+    return "";
+  }
+}
+
+function getBadge(p){
+  if(p.isPromotion) return {label:"Promoción",cls:"badge-promo"};
+  if(p.location) return {label:"Dirección",cls:"badge-direccion"};
+  if(p.fileMeta && p.fileMeta.type){
+    if(p.fileMeta.type.startsWith("image")) return {label:"Imagen",cls:"badge-archivo"};
+    if(p.fileMeta.type.startsWith("video")) return {label:"Video",cls:"badge-archivo"};
+    return {label:"Archivo",cls:"badge-archivo"};
+  }
+  return null;
+}
 
 db.collection("posts").orderBy("createdAt","desc").onSnapshot(snapshot=>{
-
-postsCache=[]
-
-snapshot.forEach(doc=>{
-
-postsCache.push({...doc.data(),id:doc.id})
-
-})
-
-renderPosts()
-
+  postsCache=[]
+  snapshot.forEach(doc=>{
+    postsCache.push({...doc.data(),id:doc.id})
+  })
+  renderPosts()
 })
 
 
 function renderPosts(){
 
-let filtered=[...postsCache]
+  let filtered=[...postsCache]
 
-if(currentTab==="archivos"){
+  if(currentTab==="archivos"){
+    filtered=filtered.filter(p=>p.fileUrl)
+  }
 
-filtered=filtered.filter(p=>p.fileUrl)
+  if(currentTab==="promocion"){
+    filtered=filtered.filter(p=>p.isPromotion)
+  }
 
-}
+  if(currentTab==="direccion"){
+    filtered=filtered.filter(p=>p.location)
+  }
 
-if(currentTab==="promocion"){
+  postsList.innerHTML=""
 
-filtered=filtered.filter(p=>p.isPromotion)
+  if(!filtered.length){
+    postsList.innerHTML=`<div class="empty-message">${emptyMessages[currentTab]||"No hay publicaciones."}</div>`
+    return
+  }
 
-}
+  filtered.forEach(p=>{
 
-if(currentTab==="direccion"){
+    const post=document.createElement("article")
+    post.className="post"
 
-filtered=filtered.filter(p=>p.location)
+    const nombre="Usuario CONALEP";
+    const badge=getBadge(p);
+    const fecha=formatDate(p.createdAt);
 
-}
+    post.innerHTML=`
+      <div class="meta">
+        <div class="left">
+          <div class="avatar">${getInitials(nombre)}</div>
+          <div>
+            <div class="post-author">${nombre}</div>
+            <div class="post-date">${fecha}</div>
+          </div>
+        </div>
+        ${badge?`<span class="badge ${badge.cls}">${badge.label}</span>`:""}
+      </div>
+      <div class="body">${p.texto||""}</div>
+    `
 
-postsList.innerHTML=""
+    if(p.fileUrl){
+      const media=document.createElement("div")
+      media.className="post-media"
+      if(p.fileMeta && p.fileMeta.type.startsWith("image")){
+        media.innerHTML=`<img src="${p.fileUrl}">`
+      }else if(p.fileMeta && p.fileMeta.type.startsWith("video")){
+        media.innerHTML=`<video src="${p.fileUrl}" controls></video>`
+      }else{
+        media.innerHTML=`<a href="${p.fileUrl}" target="_blank">Abrir archivo</a>`
+      }
+      post.appendChild(media)
+    }
 
-if(!filtered.length){
-
-postsList.innerHTML='<div class="empty-message">No hay publicaciones.</div>'
-
-return
-
-}
-
-
-filtered.forEach(p=>{
-
-const post=document.createElement("article")
-
-post.className="post"
-
-post.innerHTML=`
-
-<div class="meta">
-
-<div class="left">
-
-<div class="avatar"></div>
-
-<div>
-
-<div><strong>Usuario CONALEP</strong></div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="body">${p.texto||""}</div>
-
-`
-
-if(p.fileUrl){
-
-const media=document.createElement("div")
-
-if(p.fileMeta && p.fileMeta.type.startsWith("image")){
-
-media.innerHTML=`<img src="${p.fileUrl}" style="width:100%;border-radius:8px">`
-
-}else if(p.fileMeta && p.fileMeta.type.startsWith("video")){
-
-media.innerHTML=`<video src="${p.fileUrl}" controls style="width:100%"></video>`
-
-}else{
-
-media.innerHTML=`<a href="${p.fileUrl}" target="_blank">Abrir archivo</a>`
-
-}
-
-post.appendChild(media)
-
-}
-
-postsList.appendChild(post)
-
-})
-
+    postsList.appendChild(post)
+  })
 }
 
 </script>
 
-
-
-
-
 <script>
-  // La animación termina a los ~3.5s, luego fade out de 0.8s
   setTimeout(function () {
     var intro = document.getElementById('intro-screen');
     intro.classList.add('ocultar');
     setTimeout(function () { intro.remove(); }, 800);
   }, 3500);
 </script>
+
   <script src="../assets/js/script.js"></script>
-
-
 
 </body>
 </html>
