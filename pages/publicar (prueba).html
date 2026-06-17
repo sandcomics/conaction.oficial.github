@@ -166,8 +166,7 @@ color:white;
   <div class="tipo">
     <b>Tipo de publicación:</b><br>
     <button id="btn-publicacion">Publicación</button>
-    <button id="btn-direccion">Dirección</button>
-    <button id="btn-promocion">Promoción</button>
+    
   </div>
   <br>
   <button onclick="publicarPost()">Publicar</button>
@@ -197,8 +196,6 @@ let isPromotion = false;
 
 // BOTONES
 const btnPublicacion = document.getElementById("btn-publicacion");
-const btnDireccion = document.getElementById("btn-direccion");
-const btnPromocion = document.getElementById("btn-promocion");
 
 // ACTIVAR PUBLICACION POR DEFECTO
 btnPublicacion.classList.add("activo");
@@ -213,21 +210,10 @@ function cambiarTipo(t){
 
   if(t==="publicacion"){
     btnPublicacion.classList.add("activo");
-  }
-  if(t==="direccion"){
-    postLocation="CONALEP 165 Tuxpan";
-    btnDireccion.classList.add("activo");
-  }
-  if(t==="promocion"){
-    isPromotion=true;
-    btnPromocion.classList.add("activo");
-  }
-}
+  }}
 
 // EVENTOS
 btnPublicacion.onclick = () => cambiarTipo("publicacion");
-btnDireccion.onclick = () => cambiarTipo("direccion");
-btnPromocion.onclick = () => cambiarTipo("promocion");
 
 // PUBLICAR
 async function publicarPost(){
