@@ -1,222 +1,350 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitácora de Pantallas</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:Verdana,Geneva,Tahoma,sans-serif;}
-        body{background:var(--color-background-tertiary);padding:20px;background:#e9ecef;}
-        .container{max-width:1100px;margin:auto;display:flex;border-radius:14px;overflow:hidden;border:0.5px solid var(--color-border-tertiary);}
-        .left{width:32%;background:#3e5239;color:#b0c7b8;padding:32px;display:flex;flex-direction:column;justify-content:center;gap:16px;}
-        .left h2{color:#d4e8d4;font-size:16px;font-weight:500;}
-        .left p{font-size:13px;line-height:1.6;}
-        .right{width:68%;background:var(--color-background-primary);background:#fff;padding:24px;}
-        .title{text-align:center;margin-bottom:20px;}
-        .title h1{color:#486345;font-size:18px;font-weight:500;margin-bottom:6px;}
-        .title span{background:#3e5239;color:white;padding:4px 16px;border-radius:20px;font-size:11px;}
-        .info{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
-        .field{background:var(--color-background-secondary);background:#f8f9fa;padding:10px;border-radius:6px;border-left:4px solid #486345;}
-        .field label{font-size:11px;font-weight:500;color:#3e5239;display:block;margin-bottom:4px;}
-        .field input,.field select{width:100%;padding:6px;border-radius:4px;border:0.5px solid #ced4da;background:#fff;color:#212529;font-size:13px;}
-        .table-wrap{overflow:auto;border-radius:8px;border:1.5px solid #3e5239;}
-        table{width:100%;border-collapse:collapse;min-width:600px;}
-        th{background:#3e5239;color:white;padding:9px 7px;font-size:12px;font-weight:500;}
-        td{padding:5px;border-bottom:0.5px solid #7b8b6a;text-align:center;background:#fff;}
-        tbody tr:nth-child(even) td{background:#f8f9fa;}
-        .time{background:#486345 !important;color:white;font-weight:500;font-size:12px;white-space:nowrap;}
-        td input{width:100%;padding:4px 5px;border:0.5px solid #ced4da;border-radius:3px;background:#fff;color:#212529;font-size:12px;text-align:center;}
-        td input.auto{color:#486345;font-weight:500;}
-        .buttons{margin-top:16px;display:flex;justify-content:flex-end;gap:10px;}
-        .buttons button{padding:9px 20px;border:0.5px solid #ced4da;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;color:#212529;}
-        .buttons .save{background:#3e5239;color:white;border-color:#3e5239;}
-        .fila-seleccionada{background:#d4e8d4 !important;}
-        .fila-seleccionada td{background:#d4e8d4 !important;}
-        .hora-info{font-size:11px;color:#486345;margin-top:5px;text-align:right;}
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="left">
-        <h2>Bitácora de Pantallas</h2>
-        <p>Este registro permite llevar control del uso de pantallas, controles remotos y conexiones HDMI durante el horario escolar. Cada docente debe registrar la recepción y entrega del equipo.</p>
-        <p style="font-size:14px;font-weight:500;color:#d4e8d4;">Control de equipos</p>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Myriad+Pro:wght@300;400;600&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',system-ui,sans-serif;}
+
+.shell{
+  background:#e8f0ea;
+  padding:20px;
+  border-radius:18px;
+}
+
+.card{
+  background:#f4f8f4;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid #c6d9c6;
+}
+
+.topbar{
+  background:#2e4a30;
+  padding:18px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.topbar-brand{display:flex;align-items:center;gap:11px;}
+.topbar-orb{
+  width:38px;height:38px;
+  background:#4a7a4e;
+  border-radius:10px;
+  border:1px solid #5a9460;
+  display:flex;align-items:center;justify-content:center;
+}
+.topbar-orb i{color:#b8debb;font-size:19px;}
+.topbar-title{color:#d6ead7;font-size:13px;font-weight:600;letter-spacing:0.05em;}
+.topbar-sub{color:#6a9870;font-size:11px;margin-top:1px;font-weight:400;}
+.topbar-datepill{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.09);
+  border:1px solid rgba(255,255,255,0.13);
+  border-radius:8px;
+  padding:7px 13px;
+}
+.topbar-datepill i{color:#8ac48e;font-size:14px;}
+.topbar-datepill input{
+  background:transparent;border:none;
+  color:#bcdbbe;font-size:12px;
+  font-family:'Nunito',sans-serif;
+  width:118px;outline:none;
+}
+
+.section{padding:18px 22px;}
+
+.section+.section{
+  border-top:1px solid #d8e8d6;
+  padding-top:16px;
+}
+
+.sec-label{
+  font-size:10px;font-weight:600;
+  color:#5a8a5e;letter-spacing:0.1em;
+  text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.sec-label::after{
+  content:'';flex:1;height:1px;background:#d0e4d0;
+}
+
+.fields{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.fld label{
+  font-size:11px;color:#5a7a5e;font-weight:500;
+  display:flex;align-items:center;gap:4px;
+}
+.fld label i{font-size:12px;color:#7aaa7e;}
+.fld input,.fld select{
+  padding:7px 10px;
+  border:1px solid #c0d4c0;
+  border-radius:8px;
+  background:#fff;
+  color:#2a3a2a;
+  font-size:12px;
+  font-family:'Nunito',sans-serif;
+}
+.fld input:focus,.fld select:focus{
+  outline:none;
+  border-color:#4a7a4e;
+  box-shadow:0 0 0 2px rgba(74,122,78,0.12);
+}
+
+.editing-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#deeede;
+  border:1px solid #b4d4b4;
+  border-radius:20px;
+  padding:4px 12px;
+  font-size:11px;color:#2a5a2e;font-weight:500;
+}
+.editing-pill i{font-size:12px;color:#4a8a4e;}
+
+.tbl-wrap{
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid #c0d4c0;
+  margin-top:4px;
+}
+
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+col.c1{width:26%;}
+col.c2{width:22%;}
+col.c3{width:32%;}
+col.c4{width:20%;}
+
+thead th{
+  background:#2e4a30;
+  color:#a8cead;
+  padding:10px 12px;
+  font-size:11px;font-weight:600;
+  letter-spacing:0.04em;
+  text-align:left;
+}
+thead th+th{border-left:1px solid rgba(255,255,255,0.07);}
+
+tbody tr{border-bottom:1px solid #ddeedd;}
+tbody tr:last-child{border-bottom:none;}
+tbody td{
+  padding:7px 10px;
+  background:#fff;
+  vertical-align:middle;
+}
+tbody tr:nth-child(even) td{background:#f6faf5;}
+tbody tr:hover td{background:#eef5ee;}
+
+.tc{
+  background:#e4f0e2 !important;
+  color:#27500a;
+  font-size:11px;font-weight:600;
+  white-space:nowrap;
+  border-right:1px solid #c8dcc8;
+}
+.row-on td{background:#ddf0dd !important;}
+.row-on .tc{background:#c4e0c4 !important;color:#173404;}
+
+td input{
+  width:100%;padding:4px 7px;
+  border:1px solid transparent;border-radius:6px;
+  background:transparent;
+  color:#2a3a2a;
+  font-size:12px;font-family:'Nunito',sans-serif;
+}
+td input:focus{
+  background:#fff;
+  border-color:#4a7a4e;
+  outline:none;
+}
+td input.af{color:#2e5a30;font-weight:500;}
+
+.foot{
+  padding:14px 22px;
+  border-top:1px solid #d8e8d6;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.foot-hint{font-size:11px;color:#7a9a7e;display:flex;align-items:center;gap:5px;}
+.foot-hint i{font-size:13px;}
+.btns{display:flex;gap:8px;}
+.btn{
+  padding:7px 15px;border-radius:8px;
+  font-size:12px;font-family:'Nunito',sans-serif;font-weight:500;
+  cursor:pointer;display:inline-flex;align-items:center;gap:5px;
+  border:1px solid #c0d4c0;
+  background:#fff;color:#4a6a4e;
+  transition:background .15s;
+}
+.btn:hover{background:#eef5ee;}
+.btn i{font-size:13px;}
+.btn-save{background:#2e4a30;color:#c8e4ca;border-color:#2e4a30;}
+.btn-save:hover{background:#3a5e3c;}
+.btn-xls{border-color:#4a7a4e;color:#27500a;}
+</style>
+
+<div class="shell">
+<div class="card">
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-orb"><i class="ti ti-device-tv" aria-hidden="true"></i></div>
+      <div>
+        <div class="topbar-title">Bitácora de uso de pantallas</div>
+        <div class="topbar-sub">Control de equipos audiovisuales · Registro diario</div>
+      </div>
     </div>
-    <div class="right">
-        <div class="title">
-            <h1>BITÁCORA DE USO DE PANTALLAS</h1>
-            <span>Registro diario</span>
-        </div>
-        <div class="info">
-            <div class="field">
-                <label>🕒 SELECCIONAR HORA (fila a actualizar)</label>
-                <select id="horaSelector">
-                    <option value="0">7:00 - 8:00</option>
-                    <option value="1">8:00 - 9:00</option>
-                    <option value="2">9:00 - 10:00</option>
-                    <option value="3">10:00 - 11:00</option>
-                    <option value="4">11:00 - 12:00</option>
-                    <option value="5">12:00 - 13:00</option>
-                    <option value="6">13:00 - 14:00</option>
-                </select>
-            </div>
-            <div class="field"><label>Módulo</label><input type="text" id="modulo" placeholder="Ej. A-101"></div>
-            <div class="field"><label>Docente</label><input type="text" id="docente" placeholder="Nombre completo"></div>
-            <div class="field"><label>No. Control Remoto</label><input type="text" id="control" placeholder="Ej. CR-05"></div>
-            <div class="field"><label>Fecha</label><input type="date" id="fecha"></div>
-        </div>
-        <div class="table-wrap">
-            <table id="tabla">
-                <thead>
-                    <tr><th>Horario</th><th>Módulo</th><th>Docente</th><th>No. Control</th><th>Firma Recibe</th><th>Firma Entrega</th><th>HDMI</th></tr>
-                </thead>
-                <tbody id="cuerpo"></tbody>
-            </table>
-        </div>
-        <div class="buttons">
-            <button onclick="limpiar()">Limpiar</button>
-            <button onclick="descargarExcel()">Descargar Excel</button>
-            <button class="save" onclick="guardar()">Guardar Registro</button>
-        </div>
+    <div class="topbar-datepill">
+      <i class="ti ti-calendar" aria-hidden="true"></i>
+      <input type="date" id="fecha">
     </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label"><i class="ti ti-forms" aria-hidden="true" style="font-size:12px;"></i>Datos del registro</div>
+    <div class="fields">
+      <div class="fld">
+        <label><i class="ti ti-clock" aria-hidden="true"></i>Horario</label>
+        <select id="horaSelector">
+          <option value="0">7:00 – 8:00</option>
+          <option value="1">8:00 – 9:00</option>
+          <option value="2">9:00 – 10:00</option>
+          <option value="3">10:00 – 11:00</option>
+          <option value="4">11:00 – 12:00</option>
+          <option value="5">12:00 – 13:00</option>
+          <option value="6">13:00 – 14:00</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label><i class="ti ti-building" aria-hidden="true"></i>Módulo</label>
+        <input type="text" id="modulo" placeholder="Ej. A-101">
+      </div>
+      <div class="fld">
+        <label><i class="ti ti-user" aria-hidden="true"></i>Docente</label>
+        <input type="text" id="docente" placeholder="Nombre completo">
+      </div>
+      <div class="fld">
+        <label><i class="ti ti-remote-control" aria-hidden="true"></i>No. control</label>
+        <input type="text" id="control" placeholder="CR-05">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="sec-label" style="margin-bottom:0;flex:1;"><i class="ti ti-table" aria-hidden="true" style="font-size:12px;"></i>Registro por horario</div>
+      <div class="editing-pill">
+        <i class="ti ti-pencil" aria-hidden="true"></i>
+        <span id="rowLabel">Editando: 7:00 – 8:00</span>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"></colgroup>
+        <thead>
+          <tr>
+            <th>Horario</th>
+            <th>Módulo</th>
+            <th>Docente</th>
+            <th>No. control</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpo"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="foot-hint">
+      <i class="ti ti-info-circle" aria-hidden="true"></i>
+      Registrar recepción y entrega al inicio y fin del turno
+    </div>
+    <div class="btns">
+      <button class="btn" onclick="limpiar()"><i class="ti ti-eraser" aria-hidden="true"></i>Limpiar</button>
+      <button class="btn btn-xls" onclick="descargarExcel()"><i class="ti ti-file-spreadsheet" aria-hidden="true"></i>Excel</button>
+      <button class="btn btn-save" onclick="guardar()"><i class="ti ti-device-floppy" aria-hidden="true"></i>Guardar registro</button>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔥 CONFIG FIREBASE (la tuya ya está bien)
 const firebaseConfig = {
   apiKey: "AIzaSyDUlKmY-G-R8ZLweDCvHz_us_OYOjkHBes",
   authDomain: "formulario-bebd3.firebaseapp.com",
   projectId: "formulario-bebd3",
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// =============================
-// TABLA
-// =============================
-const horarios = ["7:00 - 8:00","8:00 - 9:00","9:00 - 10:00","10:00 - 11:00","11:00 - 12:00","12:00 - 13:00","13:00 - 14:00"];
-let filaSeleccionadaIndex = 0;
+const hrs = ["7:00 – 8:00","8:00 – 9:00","9:00 – 10:00","10:00 – 11:00","11:00 – 12:00","12:00 – 13:00","13:00 – 14:00"];
+let sel = 0;
 
-function crearTabla() {
-    const tbody = document.getElementById("cuerpo");
-    tbody.innerHTML = "";
-    horarios.forEach((h, i) => {
-        const tr = document.createElement("tr");
-        tr.setAttribute("data-fila-idx", i);
-        tr.innerHTML = `
-            <td class="time">${h}</td>
-            <td><input class="auto" data-campo="modulo" type="text"></td>
-            <td><input class="auto" data-campo="docente" type="text"></td>
-            <td><input class="auto" data-campo="control" type="text"></td>
-            <td><input type="text"></td>
-            <td><input type="text"></td>
-            <td><input type="text"></td>
-        `;
-        tbody.appendChild(tr);
-    });
-    resaltarFilaSeleccionada();
+function build() {
+  const tb = document.getElementById("cuerpo");
+  tb.innerHTML = "";
+  hrs.forEach((h,i) => {
+    const tr = document.createElement("tr");
+    tr.setAttribute("data-idx", i);
+    tr.innerHTML = `
+      <td class="tc">${h}</td>
+      <td><input class="af" data-campo="modulo" type="text"></td>
+      <td><input class="af" data-campo="docente" type="text"></td>
+      <td><input class="af" data-campo="control" type="text"></td>
+    `;
+    tb.appendChild(tr);
+  });
+  mark();
 }
 
-function resaltarFilaSeleccionada() {
-    document.querySelectorAll("#cuerpo tr").forEach((row, idx) => {
-        row.classList.remove("fila-seleccionada");
-        if (idx === filaSeleccionadaIndex) {
-            row.classList.add("fila-seleccionada");
-        }
-    });
+function mark() {
+  document.querySelectorAll("#cuerpo tr").forEach((r,i) => r.classList.toggle("row-on", i===sel));
+  document.getElementById("rowLabel").textContent = "Editando: " + hrs[sel];
 }
 
-function actualizarFilaSeleccionada(campo) {
-    const valor = document.getElementById(campo).value;
-    const inputs = document.querySelectorAll(`#cuerpo tr[data-fila-idx="${filaSeleccionadaIndex}"] input[data-campo="${campo}"]`);
-    inputs.forEach(inp => {
-        inp.value = valor;
-    });
+function sync(c) {
+  const v = document.getElementById(c).value;
+  document.querySelectorAll(`#cuerpo tr[data-idx="${sel}"] input[data-campo="${c}"]`).forEach(n => n.value=v);
 }
 
-// =============================
-// EVENTOS
-// =============================
-document.getElementById("modulo").addEventListener("input", () => actualizarFilaSeleccionada("modulo"));
-document.getElementById("docente").addEventListener("input", () => actualizarFilaSeleccionada("docente"));
-document.getElementById("control").addEventListener("input", () => actualizarFilaSeleccionada("control"));
-
-document.getElementById("horaSelector").addEventListener("change", (e) => {
-    filaSeleccionadaIndex = parseInt(e.target.value);
-    resaltarFilaSeleccionada();
-});
-
+document.getElementById("modulo").addEventListener("input",()=>sync("modulo"));
+document.getElementById("docente").addEventListener("input",()=>sync("docente"));
+document.getElementById("control").addEventListener("input",()=>sync("control"));
+document.getElementById("horaSelector").addEventListener("change",e=>{sel=parseInt(e.target.value);mark();});
 document.getElementById("fecha").valueAsDate = new Date();
 
-// =============================
-// LIMPIAR
-// =============================
-window.limpiar = function() {
-    document.getElementById("modulo").value = "";
-    document.getElementById("docente").value = "";
-    document.getElementById("control").value = "";
-    document.getElementById("fecha").valueAsDate = new Date();
-
-    document.querySelectorAll("#cuerpo input").forEach(inp => inp.value = "");
+window.limpiar=function(){
+  ["modulo","docente","control"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("fecha").valueAsDate=new Date();
+  document.querySelectorAll("#cuerpo input").forEach(n=>n.value="");
 };
 
-// =============================
-// GUARDAR EN FIREBASE 🔥
-// =============================
-window.guardar = async function() {
-    const datos = {
-        modulo: document.getElementById("modulo").value,
-        docente: document.getElementById("docente").value,
-        control: document.getElementById("control").value,
-        fecha: document.getElementById("fecha").value,
-        tabla: []
-    };
-
-    document.querySelectorAll("#cuerpo tr").forEach(tr => {
-        const fila = [];
-        tr.querySelectorAll("input").forEach(inp => fila.push(inp.value));
-        datos.tabla.push(fila);
-    });
-
-    try {
-        await addDoc(collection(db, "registros"), datos);
-        alert("Guardado correctamente 🔥");
-    } catch (e) {
-        console.error(e);
-        alert("Error al guardar");
-    }
+window.guardar=async function(){
+  const d={
+    modulo:document.getElementById("modulo").value,
+    docente:document.getElementById("docente").value,
+    control:document.getElementById("control").value,
+    fecha:document.getElementById("fecha").value,
+    tabla:[]
+  };
+  document.querySelectorAll("#cuerpo tr").forEach(tr=>{
+    const f=[];tr.querySelectorAll("input").forEach(n=>f.push(n.value));d.tabla.push(f);
+  });
+  try{await addDoc(collection(db,"registros"),d);alert("Guardado correctamente ✓");}
+  catch(e){alert("Error al guardar");}
 };
 
-// =============================
-// DESCARGAR EXCEL 🔥
-// =============================
-window.descargarExcel = async function() {
-    const querySnapshot = await getDocs(collection(db, "registros"));
-
-    const datos = [
-        ["Módulo", "Docente", "Control", "Fecha"]
-    ];
-
-    querySnapshot.forEach(doc => {
-        const d = doc.data();
-        datos.push([d.modulo, d.docente, d.control, d.fecha]);
-    });
-
-    const ws = XLSX.utils.aoa_to_sheet(datos);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Registros");
-
-    XLSX.writeFile(wb, "registros_completos.xlsx");
+window.descargarExcel=async function(){
+  const snap=await getDocs(collection(db,"registros"));
+  const data=[["Módulo","Docente","Control","Fecha"]];
+  snap.forEach(doc=>{const d=doc.data();data.push([d.modulo,d.docente,d.control,d.fecha]);});
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Registros");
+  XLSX.writeFile(wb,"registros_completos.xlsx");
 };
 
-// =============================
-crearTabla();
+build();
 </script>
-</body>
-</html>
